@@ -28,8 +28,8 @@ def main():
                 if event.unicode == 's':
                     running = False
 
-        #slow down loop to 5fps
-        clockobject.tick(5)
+        #slow down loop to 1fps
+        clockobject.tick(1)
 
         #convert time to 12 hour format
         hour_now = datetime.datetime.now().time().hour
@@ -42,15 +42,13 @@ def main():
         date_now = str(datetime.datetime.now().date().day) + " - " + str(datetime.datetime.now().date().month)+ " - " + str(datetime.datetime.now().date().year)
 
         #display stuff
+        screen.fill(display.black) 
         main_font.render_to(screen, (10, 10), twhour_now, display.white)
         main_font_small.render_to(screen, (180, 25), pm_am_now, display.white)
         main_font_small.render_to(screen, (10, 70), date_now, display.white)
 
         #update display
         pygame.display.flip()
-        #time.sleep(1)
-
-    print ("axnenenenene")
     
 # run main
 main()
