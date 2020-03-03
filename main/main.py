@@ -7,12 +7,19 @@ import datetime
 import sys
 import pygame
 import pygame.freetype
+using_pi = True
+try:
+    from gpiozero import CPUTemperature
+except:
+    using_pi = False
+
 
 # main program code
 def main():
 
     running = True
     pygame.init()
+    pygame.display.set_caption('Black mirror')
     screen = pygame.display.set_mode((400,400), pygame.RESIZABLE)
     clockobject = pygame.time.Clock()
 
@@ -47,8 +54,13 @@ def main():
         main_font_small.render_to(screen, (180, 25), pm_am_now, display.white)
         main_font_small.render_to(screen, (10, 70), date_now, display.white)
 
+        if using_pi:
+            cpu = CPUTemperature()
+            pi_temp = cpu.temperature
+            main_font_small.render_to(screen, (10, 100), str(pi_temp), display.white)
+
         #update display
-        pygame.display.flip()
+        pygame.display.flip() 
     
 # run main
 main()
