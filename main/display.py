@@ -33,7 +33,7 @@ def spause_screen_updates(cond):
 def main_display_loop():
     pygame.init()
     #kill mixer, reduce cpu usage workaround
-    pygame.mixer.quit()
+    #pygame.mixer.quit()
     # set pygame settings
     pygame.display.set_caption('Black mirror')
     #GB.screen = pygame.display.set_mode((1280,960), pygame.RESIZABLE)
