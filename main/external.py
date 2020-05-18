@@ -81,7 +81,7 @@ def rf_data_routine():
             if len(Ext_ctrl.rx_buffer) == 4:
                 temp = (int(chr(Ext_ctrl.rx_buffer[0])) * 10) + int(chr(Ext_ctrl.rx_buffer[1]))
                 hum = (int(chr(Ext_ctrl.rx_buffer[2])) * 10) + int(chr(Ext_ctrl.rx_buffer[3]))
-                print_string = "temp: " + temp + " Hum: " + hum
+                print_string = "temp: " + str(temp) + " Hum: " + str(hum)
                 print (print_string)
             print ("WE GOT DATA")
         time.sleep(0.5)
