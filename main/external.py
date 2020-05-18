@@ -27,10 +27,13 @@ def init_devices():
         #check if deamon is running and run it if not
 
         pigpioDevice = pigpio.pi()
+        print("pigpio inited")
         #init virtual wire RX 
         RF_RX_Device = piVirtualWire.rx(pigpioDevice, 4, 1000)
+        print("rx device inited")
         #start thread 
         start_rx_thread()
+        print("thread started")
 
         #Ext_devices.dhtDevice = adafruit_dht.DHT11(board.D18)
         return 0
@@ -68,6 +71,7 @@ def stop_rx_thread():
         pi.stop()
 
 def rf_data_routine():
+    print("routin line started")
     while Ext_devices.RF_RX_Device.ready() and Ext_ctrl.rx_thread_running:
         Ext_ctrl.rx_buffer[1] = Ext_ctrl.rx_buffer[0]
         Ext_ctrl.rx_buffer[0] = Ext_devices.RF_RX_Device.get()
