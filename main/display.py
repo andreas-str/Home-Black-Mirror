@@ -12,6 +12,7 @@ from astral.geocoder import database, lookup
 class GB():
     screen = None
     surface_day_main = None
+    surface_weather = None
     running = True
     update_control = True
     init_control = True
@@ -66,7 +67,7 @@ def update_display():
 
     # Things to do only once
     if GB.init_control:
-        create_day_curve()
+        create_surfaces()
         update_day_curve()
         GB.init_control = False
 
@@ -77,6 +78,7 @@ def update_display():
 
     GB.tick_timer += 1
     GB.screen.blit(GB.surface_day_main, [800,30])
+    GB.screen.blit(GB.surface_weather, [0,0])
 
 def get_time():
     # convert time to 12 hour format
@@ -91,9 +93,9 @@ def get_date():
     date_now = str(datetime.datetime.now().date().day) + "-" + str(datetime.datetime.now().date().month)+ "-" + str(datetime.datetime.now().date().year)
     return date_now
 
-def create_day_curve():
-
+def create_surfaces():
     GB.surface_day_main = pygame.Surface((450, 250))
+    GB.surface_weather = pygame.Surface((100, 100))
 
 def update_day_curve():
 
@@ -165,3 +167,9 @@ def update_day_curve():
         pygame.gfxdraw.filled_polygon(GB.surface_day_main, data_points, constants.gray2)
         # draw circle
         pygame.draw.circle(GB.surface_day_main, constants.moon_blue, data_points[(index-1)], 15, 0)
+
+def update_weather():
+    Data = external.get_rf_data()
+
+    GB.surface_weather.fill(constants.black) 
+    

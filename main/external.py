@@ -76,16 +76,19 @@ def rf_data_routine():
     print("routin line started")
     while Ext_ctrl.rx_thread_running:
         while Ext_devices.RF_RX_Device.ready():
-            Ext_ctrl.rx_buffer = Ext_devices.RF_RX_Device.get()
-            print (Ext_ctrl.rx_buffer)
-            if len(Ext_ctrl.rx_buffer) == 4:
-                temp = (int(chr(Ext_ctrl.rx_buffer[0])) * 10) + int(chr(Ext_ctrl.rx_buffer[1]))
-                hum = (int(chr(Ext_ctrl.rx_buffer[2])) * 10) + int(chr(Ext_ctrl.rx_buffer[3]))
-                print_string = "temp: " + str(temp) + " Hum: " + str(hum)
-                print (print_string)
-            print ("WE GOT DATA")
+            buffer = Ext_devices.RF_RX_Device.get()
+            Ext_ctrl.rx_buffer = buffer
         time.sleep(0.5)
 
 def get_rf_data():
-    return Ext_ctrl.rx_buffer
+    if len(Ext_ctrl.rx_buffer) == 4:
+        temp = (int(chr(Ext_ctrl.rx_buffer[0])) * 10) + int(chr(Ext_ctrl.rx_buffer[1]))
+        hum = (int(chr(Ext_ctrl.rx_buffer[2])) * 10) + int(chr(Ext_ctrl.rx_buffer[3]))
+        print_string = "temp: " + str(temp) + " Hum: " + str(hum)
+        print (print_string)
+        final_list = []
+        final_list.append(temp)
+        final_list.append(hum)
+        return final_list
+    return None
 
