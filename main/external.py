@@ -59,7 +59,7 @@ def get_pi_temp():
     return None
 
 def start_rx_thread():
-    if not Ext_ctrl.rx_thread.is_alive():
+    if Ext_ctrl.rx_thread == None or Ext_ctrl.rx_thread.is_alive() == False:
         Ext_ctrl.rx_thread = threading.Thread(target=rf_data_routine)
         Ext_ctrl.rx_thread.start()
         Ext_ctrl.rx_thread_running = True
