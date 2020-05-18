@@ -172,7 +172,7 @@ def update_day_curve():
         pygame.draw.circle(GB.surface_day_main, constants.moon_blue, data_points[(index-1)], 15, 0)
 
 def update_weather():
-    Data = external.get_rf_data()
+    #Data = external.get_rf_data()
 
     GB.surface_weather.fill(constants.black) 
 
