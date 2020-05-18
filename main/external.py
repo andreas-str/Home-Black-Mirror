@@ -1,17 +1,49 @@
 using_pi = True
 try:
     from gpiozero import CPUTemperature
-    import Adafruit_DHT
+    import piVirtualWire as piVirtualWire
+    import board
+    import adafruit_dht
+    import pigpio
+    import threading
 except:
     using_pi = False
 
+class Ext_devices():
+    dhtDevice = None
+    pigpioDevice = None
+    RF_RX_Device = None
+
+class Ext_ctrl():
+    rx_thread = None
+    rx_thread_running = False
+    new_rx_data = False
+    rx_buffer= None
+    tx_buffer = None
+
+def init_devices():
+    if using_pi:
+        #Init PIGIO 
+        #check if deamon is running and run it if not
+
+        pigpioDevice = pigpio.pi()
+        #init virtual wire RX 
+        RF_RX_Device = piVirtualWire.rx(pigpioDevice, 4, 1000)
+        #start thread 
+        start_rx_thread()
+
+        #Ext_devices.dhtDevice = adafruit_dht.DHT11(board.D18)
+        return 0
+    return -1
 
 def get_home_temp_hum():
     try:
-        humidity, temperature = Adafruit_DHT.read_retry(11, 4)
-    except:
+        temperature = Ext_devices.dhtDevice.temperature
+        humidity = Ext_devices.dhtDevice.humidity
+    except RuntimeError as error:
         print("get_home_hum_temp error")
-        return None
+        print(error.args[0])
+        return None, None
 
     return temperature, humidity
 
@@ -22,6 +54,25 @@ def get_pi_temp():
         return pi_temp
     return None
 
-def get_outside_temp_hum():
-    #do smth here
-    return 1
+def start_rx_thread():
+    if not Ext_ctrl.rx_thread.is_alive():
+        Ext_ctrl.rx_thread = threading.Thread(target=rf_data_routine)
+        Ext_ctrl.rx_thread.start()
+        Ext_ctrl.rx_thread_running = True
+
+def stop_rx_thread():
+    if Ext_ctrl.rx_thread_running:
+        Ext_ctrl.rx_thread_running = False
+        Ext_ctrl.rx_thread.join()
+        rx.cancel()
+        pi.stop()
+
+def rf_data_routine():
+    while Ext_devices.RF_RX_Device.ready() and Ext_ctrl.rx_thread_running:
+        Ext_ctrl.rx_buffer[1] = Ext_ctrl.rx_buffer[0]
+        Ext_ctrl.rx_buffer[0] = Ext_devices.RF_RX_Device.get()
+        print (Ext_ctrl.rx_buffer[0])
+
+def get_rf_data():
+    return Ext_ctrl.rx_buffer[1]
+

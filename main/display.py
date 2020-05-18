@@ -13,21 +13,28 @@ class GB():
     screen = None
     surface_day_main = None
     running = True
+    update_control = True
     init_control = True
+    tick_timer = 0
     pygame.freetype.init()
     main_font = pygame.freetype.Font("fonts/AurulentSansMono-Regular.otf", 130)
     main_font_small = pygame.freetype.Font("fonts/F25_Bank_Printer.ttf", 40)
 
-# stop or stop the loop to update the screen
-def start_stop_display_loop(cond):
-    GB.running = cond
+# force stop the display loop
+def stop_display_loop():
+    GB.running = False
 
-# main display loop :P
+# pause screen updates (sleep mode)
+def spause_screen_updates(cond):
+    GB.update_control = cond
+
+# main display loop
 def main_display_loop():
     pygame.init()
     # set pygame settings
     pygame.display.set_caption('Black mirror')
-    GB.screen = pygame.display.set_mode((1280,960), pygame.FULLSCREEN)
+    #GB.screen = pygame.display.set_mode((1280,960), pygame.RESIZABLE)
+    GB.screen = pygame.display.set_mode((640,480), pygame.RESIZABLE)
     clock = pygame.time.Clock()
 
     # start loop
@@ -40,10 +47,11 @@ def main_display_loop():
                     GB.running = False
 
         # update display
-        update_display()
-        pygame.display.update()
+        if GB.update_control:
+            update_display()
+            pygame.display.update()
         # set fps
-        clock.tick(5)
+        clock.tick(10)
 
     pygame.quit()
 
@@ -52,23 +60,27 @@ def update_display():
     GB.screen.fill(constants.black) 
 
     time_now, pm_am_now = get_time()
-    GB.main_font.render_to(GB.screen, (45, 30), time_now, constants.white)
-    GB.main_font_small.render_to(GB.screen, (450, 100), pm_am_now, constants.white)
-    GB.main_font_small.render_to(GB.screen, (130, 160), get_date(), constants.gray1)
+    GB.main_font.render_to(GB.screen, (50, 60), time_now, constants.white)
+    GB.main_font_small.render_to(GB.screen, (440, 130), pm_am_now, constants.white)
+    GB.main_font_small.render_to(GB.screen, (120, 195), get_date(), constants.gray1)
 
     # Things to do only once
     if GB.init_control:
         create_day_curve()
+        update_day_curve()
         GB.init_control = False
-    
-    update_day_curve()
+
+    # Things to do once every 1 minute
+    if GB.tick_timer > 600:
+        update_day_curve()
+        GB.tick_timer = 0
+
+    GB.tick_timer += 1
     GB.screen.blit(GB.surface_day_main, [800,30])
 
 def get_time():
     # convert time to 12 hour format
-    hour_now = datetime.datetime.now().time().hour
-    minute_now = datetime.datetime.now().time().minute
-    tfhour = time.strptime(str(hour_now) + ":" + str(minute_now), "%H:%M")
+    tfhour = time.strptime(str(datetime.datetime.now().time().hour) + ":" + str(datetime.datetime.now().time().minute), "%H:%M")
     twhour_now = time.strftime( "%I:%M", tfhour)
     pm_am_now = time.strftime( "%p", tfhour)
 
@@ -88,8 +100,8 @@ def update_day_curve():
     city = lookup(constants.location, database())
     sun_info = sun(city.observer, date=datetime.datetime.now())
 
-    time_left = (sun_info['sunrise'].hour * 60) + sun_info['sunrise'].minute
-    time_middle = ((sun_info['sunset'].hour * 60) + sun_info['sunset'].minute) - ((sun_info['sunrise'].hour * 60) + sun_info['sunrise'].minute) + time_left
+    time_left = (sun_info['sunrise'].hour * 60) + sun_info['sunrise'].minute + 35
+    time_middle = ((sun_info['sunset'].hour * 60) + sun_info['sunset'].minute + 35) - ((sun_info['sunrise'].hour * 60) + sun_info['sunrise'].minute + 35) + time_left
 
     time_now = (datetime.datetime.now().time().hour * 60) + datetime.datetime.now().time().minute
     data_points = []
