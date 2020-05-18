@@ -1,9 +1,9 @@
 using_pi = True
 try:
-    from gpiozero import CPUTemperature
+    #from gpiozero import CPUTemperature
     import piVirtualWire.piVirtualWire as piVirtualWire
-    import board
-    import adafruit_dht
+    #import board
+    #import adafruit_dht
     import pigpio
     import threading
 except:
@@ -40,16 +40,16 @@ def init_devices():
         return 0
     return -1
 
-def get_home_temp_hum():
-    try:
-        temperature = Ext_devices.dhtDevice.temperature
-        humidity = Ext_devices.dhtDevice.humidity
-    except RuntimeError as error:
-        print("get_home_hum_temp error")
-        print(error.args[0])
-        return None, None
+#def get_home_temp_hum():
+#    try:
+#        temperature = Ext_devices.dhtDevice.temperature
+#        humidity = Ext_devices.dhtDevice.humidity
+#    except RuntimeError as error:
+#        print("get_home_hum_temp error")
+#        print(error.args[0])
+#        return None, None
 
-    return temperature, humidity
+#    return temperature, humidity
 
 def get_pi_temp():
     if using_pi:
