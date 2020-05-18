@@ -76,12 +76,11 @@ def rf_data_routine():
     print("routin line started")
     while Ext_ctrl.rx_thread_running:
         while Ext_devices.RF_RX_Device.ready():
-            Ext_ctrl.rx_buffer[1] = Ext_ctrl.rx_buffer[0]
-            Ext_ctrl.rx_buffer[0] = Ext_devices.RF_RX_Device.get()
-            print (Ext_ctrl.rx_buffer[0])
+            Ext_ctrl.rx_buffer = Ext_devices.RF_RX_Device.get()
+            print (Ext_ctrl.rx_buffer)
             print ("WE GOT DATA")
         time.sleep(0.5)
 
 def get_rf_data():
-    return Ext_ctrl.rx_buffer[1]
+    return Ext_ctrl.rx_buffer
 
