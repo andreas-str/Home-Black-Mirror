@@ -78,6 +78,8 @@ def update_display():
     if GB.tick_timer > 600:
         update_day_curve()
         GB.tick_timer = 0
+        print(external.get_pi_temp())
+        print(external.get_rf_data())
 
     update_weather()
 

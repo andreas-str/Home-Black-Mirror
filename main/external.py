@@ -1,7 +1,7 @@
 using_pi = True
 try:
     import time
-    #from gpiozero import CPUTemperature
+    from gpiozero import CPUTemperature
     import piVirtualWire.piVirtualWire as piVirtualWire
     #import board
     #import adafruit_dht
@@ -55,8 +55,7 @@ def init_devices():
 def get_pi_temp():
     if using_pi:
         cpu = CPUTemperature()
-        pi_temp = cpu.temperature
-        return pi_temp
+        return cpu.temperature
     return None
 
 def start_rx_thread():
@@ -78,15 +77,12 @@ def rf_data_routine():
         while Ext_devices.RF_RX_Device.ready():
             buffer = Ext_devices.RF_RX_Device.get()
             Ext_ctrl.rx_buffer = buffer
-            print (Ext_ctrl.rx_buffer)
         time.sleep(0.5)
 
 def get_rf_data():
     if len(Ext_ctrl.rx_buffer) == 4:
         temp = (int(chr(Ext_ctrl.rx_buffer[0])) * 10) + int(chr(Ext_ctrl.rx_buffer[1]))
         hum = (int(chr(Ext_ctrl.rx_buffer[2])) * 10) + int(chr(Ext_ctrl.rx_buffer[3]))
-        print_string = "temp: " + str(temp) + " Hum: " + str(hum)
-        print (print_string)
         final_list = []
         final_list.append(temp)
         final_list.append(hum)
