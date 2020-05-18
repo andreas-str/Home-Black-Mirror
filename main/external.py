@@ -78,6 +78,7 @@ def rf_data_routine():
         while Ext_devices.RF_RX_Device.ready():
             buffer = Ext_devices.RF_RX_Device.get()
             Ext_ctrl.rx_buffer = buffer
+            print (Ext_ctrl.rx_buffer)
         time.sleep(0.5)
 
 def get_rf_data():
