@@ -9,7 +9,7 @@ try:
 except:
     using_pi = False
 
-class ():
+class Ext_devices():
     dhtDevice = None
     pigpioDevice = None
     RF_RX_Device = None
