@@ -75,7 +75,7 @@ def update_display():
         GB.init_control = False
 
     # Things to do once every 1 minute
-    if GB.tick_timer > 600:
+    if GB.tick_timer > 6:
         update_day_curve()
         GB.tick_timer = 0
         print(external.get_pi_temp())
