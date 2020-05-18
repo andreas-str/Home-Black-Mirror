@@ -9,7 +9,7 @@ try:
 except:
     using_pi = False
 
-class Ext_devices():
+class ():
     dhtDevice = None
     pigpioDevice = None
     RF_RX_Device = None
@@ -27,10 +27,10 @@ def init_devices():
         #Init PIGIO 
         #check if deamon is running and run it if not
 
-        pigpioDevice = pigpio.pi()
+        Ext_devices.pigpioDevice = pigpio.pi()
         print("pigpio inited")
         #init virtual wire RX 
-        RF_RX_Device = piVirtualWire.rx(pigpioDevice, 4, 1000)
+        Ext_devices.RF_RX_Device = piVirtualWire.rx(Ext_devices.pigpioDevice, 4, 1000)
         print("rx device inited")
         #start thread 
         start_rx_thread()
