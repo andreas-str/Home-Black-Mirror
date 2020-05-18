@@ -69,12 +69,15 @@ def update_display():
     if GB.init_control:
         create_surfaces()
         update_day_curve()
+        update_weather()
         GB.init_control = False
 
     # Things to do once every 1 minute
     if GB.tick_timer > 600:
         update_day_curve()
         GB.tick_timer = 0
+
+    update_weather()
 
     GB.tick_timer += 1
     GB.screen.blit(GB.surface_day_main, [800,30])
@@ -172,4 +175,4 @@ def update_weather():
     Data = external.get_rf_data()
 
     GB.surface_weather.fill(constants.black) 
-    
+
