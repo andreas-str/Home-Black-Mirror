@@ -11,6 +11,6 @@ def main():
     #start display
     display.main_display_loop()
     external.stop_rx_thread()
-    
+
 # run main
 main()
