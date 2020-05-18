@@ -23,6 +23,7 @@ class Ext_ctrl():
 
 def init_devices():
     if using_pi:
+        print("init started")
         #Init PIGIO 
         #check if deamon is running and run it if not
 
