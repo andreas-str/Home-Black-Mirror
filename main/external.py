@@ -1,7 +1,7 @@
 using_pi = True
 try:
     from gpiozero import CPUTemperature
-    import piVirtualWire as piVirtualWire
+    import piVirtualWire.piVirtualWire as piVirtualWire
     import board
     import adafruit_dht
     import pigpio
