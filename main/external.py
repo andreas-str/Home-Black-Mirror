@@ -69,8 +69,8 @@ def stop_rx_thread():
     if Ext_ctrl.rx_thread_running:
         Ext_ctrl.rx_thread_running = False
         Ext_ctrl.rx_thread.join()
-        rx.cancel()
-        pi.stop()
+        Ext_devices.RF_RX_Device.cancel()
+        Ext_devices.pigpioDevice.stop()
 
 def rf_data_routine():
     print("routin line started")
