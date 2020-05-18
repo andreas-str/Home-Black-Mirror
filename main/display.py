@@ -52,7 +52,7 @@ def main_display_loop():
             update_display()
             pygame.display.update()
         # set fps
-        clock.tick(10)
+        clock.tick(1)
 
     pygame.quit()
 
