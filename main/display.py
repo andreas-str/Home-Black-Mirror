@@ -16,18 +16,25 @@ class GB():
     running = True
     update_control = True
     init_control = True
+    is_night = False
     tick_timer = 0
     pygame.freetype.init()
     main_font = pygame.freetype.Font("fonts/AurulentSansMono-Regular.otf", 130)
+    main_font_medium = pygame.freetype.Font("fonts/Code New Roman.otf", 70)
     main_font_small = pygame.freetype.Font("fonts/F25_Bank_Printer.ttf", 40)
+    temp_icon = pygame.image.load("icons/temp_icon.png")
+    hum_icon = pygame.image.load("icons/hum_icon.png")
+    sun_icon = pygame.image.load("icons/sun.png")
+    cloud_icon = pygame.image.load("icons/cloud.png")
+    moon_icon = pygame.image.load("icons/moon.png")
 
 # force stop the display loop
 def stop_display_loop():
     GB.running = False
 
-# pause screen updates (sleep mode)
-def spause_screen_updates(cond):
-    GB.update_control = cond
+# allow screen sleep mode
+def screen_update_control():
+    GB.update_control = True
 
 # main display loop
 def main_display_loop():
@@ -36,8 +43,7 @@ def main_display_loop():
     pygame.mixer.quit()
     # set pygame settings
     pygame.display.set_caption('Black mirror')
-    #GB.screen = pygame.display.set_mode((1280,960), pygame.RESIZABLE)
-    GB.screen = pygame.display.set_mode((640,480), pygame.RESIZABLE)
+    GB.screen = pygame.display.set_mode((1280,960), pygame.RESIZABLE)
     clock = pygame.time.Clock()
 
     # start loop
@@ -46,13 +52,15 @@ def main_display_loop():
             if event.type == pygame.QUIT:
                 GB.running = False
             elif event.type == pygame.KEYDOWN:
-                if event.unicode == 's':
+                if event.unicode == 'q':
                     GB.running = False
-
+                    
         # update display
         if GB.update_control:
             update_display()
             pygame.display.update()
+        
+        #screen_update_control()
         # set fps
         clock.tick(1)
 
@@ -85,7 +93,7 @@ def update_display():
 
     GB.tick_timer += 1
     GB.screen.blit(GB.surface_day_main, [800,30])
-    GB.screen.blit(GB.surface_weather, [0,0])
+    GB.screen.blit(GB.surface_weather, [800,290])
 
 def get_time():
     # convert time to 12 hour format
@@ -102,7 +110,7 @@ def get_date():
 
 def create_surfaces():
     GB.surface_day_main = pygame.Surface((450, 250))
-    GB.surface_weather = pygame.Surface((100, 100))
+    GB.surface_weather = pygame.Surface((450, 150))
 
 def update_day_curve():
 
@@ -130,6 +138,7 @@ def update_day_curve():
 
     if time_now <= time_left:
         # its night now, left
+        GB.is_night = True
         # calculate index
         index = constants.map_num(time_now, 0, time_left, 0, 10)
         index = int(index) + 2
@@ -144,6 +153,7 @@ def update_day_curve():
 
     elif time_now > time_left and time_now <= time_middle:
         # its day now
+        GB.is_night = False
         # calculate index
         index = constants.map_num(time_now, time_left, time_middle, 0, 20)
         index = int(index) + 2
@@ -160,6 +170,7 @@ def update_day_curve():
 
     elif time_now > time_middle:
         # its night now, right
+        GB.is_night = True
         # calculate index
         index = constants.map_num(time_now, time_middle, 1440, 0, 10)
         index = int(index) + 2
@@ -176,7 +187,18 @@ def update_day_curve():
         pygame.draw.circle(GB.surface_day_main, constants.moon_blue, data_points[(index-1)], 15, 0)
 
 def update_weather():
-    #Data = external.get_rf_data()
-
+    Data = external.get_rf_data()
     GB.surface_weather.fill(constants.black) 
+    if Data == None:
+        GB.main_font_small.render_to(GB.surface_weather, (0, 0), "Weather Station", constants.white)
+        GB.main_font_small.render_to(GB.surface_weather, (0, 36), "not connected!", constants.white)
+    else:
+        GB.main_font_medium.render_to(GB.surface_weather, (85, 10), str(Data[0]) + '\u00b0' + "C", constants.white)
+        GB.surface_weather.blit(GB.temp_icon, (10,0))
+        GB.main_font_medium.render_to(GB.surface_weather, (85, 90), str(Data[1]) + "%", constants.white)
+        GB.surface_weather.blit(GB.hum_icon, (5,79))
+        if GB.is_night:
+            GB.surface_weather.blit(GB.moon_icon, (290,25))
+        else:
+            GB.surface_weather.blit(GB.sun_icon, (290,25))
 
