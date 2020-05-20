@@ -22,17 +22,17 @@ class Ext_ctrl():
 
 def init_devices():
     if using_pi:
-        print("init started")
+        print("init started, running on pi")
         #Init PIGIO 
         try:
             Ext_devices.pigpioDevice = pigpio.pi()
-            print("pigpio inited")
+            print("pigpio started")
             #init virtual wire RX 
             Ext_devices.RF_RX_Device = piVirtualWire.rx(Ext_devices.pigpioDevice, 4, 1000)
-            print("rx device inited")
+            print("rx device started")
             #start thread 
             start_rx_thread()
-            print("thread started")
+            print("rx thread started")
             return 0
         except:
             return -1
@@ -58,7 +58,7 @@ def stop_rx_thread():
         Ext_devices.pigpioDevice.stop()
 
 def rf_data_routine():
-    print("routin line started")
+    print("rx routine started")
     while Ext_ctrl.rx_thread_running:
         while Ext_devices.RF_RX_Device.ready():
             buffer = Ext_devices.RF_RX_Device.get()
@@ -67,12 +67,20 @@ def rf_data_routine():
 
 def get_rf_data():
     try:
-        if len(Ext_ctrl.rx_buffer) == 4:
+        if len(Ext_ctrl.rx_buffer) > 4:
             temp = (int(chr(Ext_ctrl.rx_buffer[0])) * 10) + int(chr(Ext_ctrl.rx_buffer[1]))
             hum = (int(chr(Ext_ctrl.rx_buffer[2])) * 10) + int(chr(Ext_ctrl.rx_buffer[3]))
+            panel_value = 0
+            if len(Ext_ctrl.rx_buffer) == 5:
+                panel_value = int(chr(Ext_ctrl.rx_buffer[4]))
+            elif len(Ext_ctrl.rx_buffer) == 6:
+                panel_value = (int(chr(Ext_ctrl.rx_buffer[4])) * 10) + int(chr(Ext_ctrl.rx_buffer[5]))
+            elif len(Ext_ctrl.rx_buffer) == 7:
+                panel_value = (int(chr(Ext_ctrl.rx_buffer[4])) * 100) + (int(chr(Ext_ctrl.rx_buffer[5])) * 10) + int(chr(Ext_ctrl.rx_buffer[6]))
             final_list = []
             final_list.append(temp)
             final_list.append(hum)
+            final_list.append(panel_value)
             return final_list
     except:
         return None

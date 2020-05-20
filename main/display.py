@@ -85,11 +85,10 @@ def update_display():
     # Things to do once every 1 minute
     if GB.tick_timer > 6:
         update_day_curve()
+        update_weather()
         GB.tick_timer = 0
         print(external.get_pi_temp())
         print(external.get_rf_data())
-
-    update_weather()
 
     GB.tick_timer += 1
     GB.screen.blit(GB.surface_day_main, [800,30])
