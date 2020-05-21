@@ -81,6 +81,7 @@ def get_rf_data():
             final_list.append(temp)
             final_list.append(hum)
             final_list.append(panel_value)
+            new_rx_data = True
             return final_list
     except:
         return None

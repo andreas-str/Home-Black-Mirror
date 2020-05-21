@@ -18,10 +18,12 @@ class GB():
     init_control = True
     is_night = False
     tick_timer = 0
+    last_weather_update = 0
     pygame.freetype.init()
     main_font = pygame.freetype.Font("fonts/AurulentSansMono-Regular.otf", 130)
     main_font_medium = pygame.freetype.Font("fonts/Code New Roman.otf", 70)
     main_font_small = pygame.freetype.Font("fonts/F25_Bank_Printer.ttf", 40)
+    main_font_tiny = pygame.freetype.Font("fonts/Code New Roman.otf", 30)
     temp_icon = pygame.image.load("icons/temp_icon.png")
     hum_icon = pygame.image.load("icons/hum_icon.png")
     sun_icon = pygame.image.load("icons/sun.png")
@@ -83,12 +85,10 @@ def update_display():
         GB.init_control = False
 
     # Things to do once every 1 minute
-    if GB.tick_timer > 6:
+    if GB.tick_timer > 1:
         update_day_curve()
         update_weather()
         GB.tick_timer = 0
-        print(external.get_pi_temp())
-        print(external.get_rf_data())
 
     GB.tick_timer += 1
     GB.screen.blit(GB.surface_day_main, [800,30])
@@ -109,7 +109,7 @@ def get_date():
 
 def create_surfaces():
     GB.surface_day_main = pygame.Surface((450, 250))
-    GB.surface_weather = pygame.Surface((450, 150))
+    GB.surface_weather = pygame.Surface((450, 180))
 
 def update_day_curve():
 
@@ -187,7 +187,9 @@ def update_day_curve():
 
 def update_weather():
     Data = external.get_rf_data()
+
     GB.surface_weather.fill(constants.black) 
+
     if Data == None:
         GB.main_font_small.render_to(GB.surface_weather, (0, 0), "Weather Station", constants.white)
         GB.main_font_small.render_to(GB.surface_weather, (0, 36), "not connected!", constants.white)
@@ -201,3 +203,9 @@ def update_weather():
         else:
             GB.surface_weather.blit(GB.sun_icon, (290,25))
 
+        if external.Ext_ctrl.new_rx_data == False:
+            last_weather_update += 1
+            GB.main_font_tiny.render_to(GB.surface_weather, (60, 120), str(GB.last_weather_update) + " minute(s) ago", constants.white)
+        else:
+            last_weather_update = 0
+            external.Ext_ctrl.new_rx_data = False
