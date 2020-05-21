@@ -85,7 +85,7 @@ def update_display():
         GB.init_control = False
 
     # Things to do once every 1 minute
-    if GB.tick_timer > 1:
+    if GB.tick_timer > 60:
         update_day_curve()
         update_weather()
         GB.tick_timer = 0
@@ -109,7 +109,7 @@ def get_date():
 
 def create_surfaces():
     GB.surface_day_main = pygame.Surface((450, 250))
-    GB.surface_weather = pygame.Surface((450, 180))
+    GB.surface_weather = pygame.Surface((450, 220))
 
 def update_day_curve():
 
@@ -205,7 +205,7 @@ def update_weather():
 
         if external.Ext_ctrl.new_rx_data == False:
             GB.last_weather_update += 1
-            GB.main_font_tiny.render_to(GB.surface_weather, (60, 120), str(GB.last_weather_update) + " minute(s) ago", constants.white)
+            GB.main_font_tiny.render_to(GB.surface_weather, (60, 190), str(GB.last_weather_update) + " minute(s) ago", constants.white)
         else:
             GB.last_weather_update = 0
             external.Ext_ctrl.new_rx_data = False
