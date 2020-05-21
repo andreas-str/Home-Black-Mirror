@@ -109,7 +109,7 @@ def get_date():
 
 def create_surfaces():
     GB.surface_day_main = pygame.Surface((450, 250))
-    GB.surface_weather = pygame.Surface((450, 220))
+    GB.surface_weather = pygame.Surface((450, 200))
 
 def update_day_curve():
 
@@ -205,7 +205,7 @@ def update_weather():
 
         if external.Ext_ctrl.new_rx_data == False:
             GB.last_weather_update += 1
-            GB.main_font_tiny.render_to(GB.surface_weather, (60, 190), str(GB.last_weather_update) + " minute(s) ago", constants.white)
+            GB.main_font_tiny.render_to(GB.surface_weather, (150, 170), str(GB.last_weather_update) + " min ago", constants.white)
         else:
             GB.last_weather_update = 0
             external.Ext_ctrl.new_rx_data = False
