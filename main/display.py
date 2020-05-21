@@ -204,8 +204,8 @@ def update_weather():
             GB.surface_weather.blit(GB.sun_icon, (290,25))
 
         if external.Ext_ctrl.new_rx_data == False:
-            last_weather_update += 1
+            GB.last_weather_update += 1
             GB.main_font_tiny.render_to(GB.surface_weather, (60, 120), str(GB.last_weather_update) + " minute(s) ago", constants.white)
         else:
-            last_weather_update = 0
+            GB.last_weather_update = 0
             external.Ext_ctrl.new_rx_data = False
