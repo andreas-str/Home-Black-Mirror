@@ -63,6 +63,7 @@ def rf_data_routine():
         while Ext_devices.RF_RX_Device.ready():
             buffer = Ext_devices.RF_RX_Device.get()
             Ext_ctrl.rx_buffer = buffer
+            Ext_ctrl.new_rx_data = True
         time.sleep(0.5)
 
 def get_rf_data():
@@ -81,7 +82,6 @@ def get_rf_data():
             final_list.append(temp)
             final_list.append(hum)
             final_list.append(panel_value)
-            Ext_ctrl.new_rx_data = True
             return final_list
     except:
         return None
