@@ -254,12 +254,11 @@ def debug_info(cond):
         #draw text
         GB.main_font_tiny.render_to(GB.surface_debug, (7, 7), "Debug info", constants.white)
 
-        #weather
         #col 1
         GB.main_font_tiny.render_to(GB.surface_debug, (7, 50), "Pi Temp: " + str(external.get_pi_temp()), constants.white)
-        GB.main_font_tiny.render_to(GB.surface_debug, (7, 80), "Last RF Updt: " + str(GB.last_weather_update), constants.white)
+        GB.main_font_tiny.render_to(GB.surface_debug, (7, 80), "Tick Timer: " + str(GB.tick_timer), constants.white)
         GB.main_font_tiny.render_to(GB.surface_debug, (7, 110), "Is Daytime: " + str(GB.is_day_time), constants.white)
-        GB.main_font_tiny.render_to(GB.surface_debug, (7, 140), "Tick Timer: " + str(GB.tick_timer), constants.white)
+        GB.main_font_tiny.render_to(GB.surface_debug, (7, 140), "Last RF Updt: " + str(GB.last_weather_update), constants.white)
         GB.main_font_tiny.render_to(GB.surface_debug, (7, 170), "RF Active: " + str(external.Ext_ctrl.rx_thread_running), constants.white)
         GB.main_font_tiny.render_to(GB.surface_debug, (7, 200), "RF Raw: " + str(external.Ext_ctrl.rx_buffer), constants.white)
     else:
