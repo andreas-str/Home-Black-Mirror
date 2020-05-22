@@ -13,6 +13,7 @@ class GB():
     screen = None
     surface_day_main = None
     surface_weather = None
+    surface_notifications = None
     surface_debug = None
     running = True
     update_control = True
@@ -88,6 +89,7 @@ def update_display(mode):
         create_surfaces()
         update_day_curve()
         update_weather()
+        update_notifications()
         GB.init_control = False
 
     # Things to do once every 1 minute
@@ -97,6 +99,7 @@ def update_display(mode):
         GB.tick_timer = 0
 
     # Things to do always
+    update_notifications()
     if mode == 1:
         debug_info(True)
     else:
@@ -105,6 +108,7 @@ def update_display(mode):
     GB.tick_timer += 1
     GB.screen.blit(GB.surface_day_main, [800,30])
     GB.screen.blit(GB.surface_weather, [800,290])
+    GB.screen.blit(GB.surface_notifications, [20,270])
     GB.screen.blit(GB.surface_debug, [20,635])
 
 def get_time():
@@ -123,7 +127,8 @@ def get_date():
 def create_surfaces():
     GB.surface_day_main = pygame.Surface((450, 250))
     GB.surface_weather = pygame.Surface((450, 200))
-    GB.surface_debug = pygame.Surface((800, 300))
+    GB.surface_notifications = pygame.Surface((750, 350))
+    GB.surface_debug = pygame.Surface((750, 300))
 
 def update_day_curve():
 
@@ -218,6 +223,7 @@ def update_weather():
         else:
 
             GB.surface_weather.blit(GB.sun_icon, (290,25))
+            GB.surface_weather.blit(GB.cloud_icon, (290,25))
 
         if external.Ext_ctrl.new_rx_data == False:
             GB.last_weather_update += 1
@@ -227,26 +233,34 @@ def update_weather():
             GB.last_weather_update = 0
             external.Ext_ctrl.new_rx_data = False
 
+def update_notifications():
+    GB.surface_notifications.fill(constants.black)
+    GB.main_font_tiny.render_to(GB.surface_notifications, (40, 40), "This is a notification area", constants.white) 
+
+
 def debug_info(cond):
     if cond:
 
         GB.surface_debug.fill(constants.black) 
 
         #draw box
-        pygame.draw.lines(GB.surface_debug, constants.gray2, False, [(180,3), (787,3)], 2)
+        pygame.draw.lines(GB.surface_debug, constants.gray2, False, [(180,3), (747,3)], 2)
         pygame.draw.lines(GB.surface_debug, constants.gray2, False, [(180,3), (180,35)], 2)
         pygame.draw.lines(GB.surface_debug, constants.gray2, False, [(3,35), (180,35)], 2)
-        pygame.draw.lines(GB.surface_debug, constants.gray2, False, [(787,3), (787,297)], 2)
-        pygame.draw.lines(GB.surface_debug, constants.gray2, False, [(3,35), (3,787)], 2)
-        pygame.draw.lines(GB.surface_debug, constants.gray2, False, [(3,297), (787,297)], 2)
+        pygame.draw.lines(GB.surface_debug, constants.gray2, False, [(747,3), (747,297)], 2)
+        pygame.draw.lines(GB.surface_debug, constants.gray2, False, [(3,35), (3,747)], 2)
+        pygame.draw.lines(GB.surface_debug, constants.gray2, False, [(3,297), (747,297)], 2)
 
         #draw text
         GB.main_font_tiny.render_to(GB.surface_debug, (7, 7), "Debug info", constants.white)
 
         #weather
-        GB.main_font_tiny.render_to(GB.surface_debug, (7, 50), "Pi temp: " + str(external.get_pi_temp()), constants.white)
+        #col 1
+        GB.main_font_tiny.render_to(GB.surface_debug, (7, 50), "Pi Temp: " + str(external.get_pi_temp()), constants.white)
         GB.main_font_tiny.render_to(GB.surface_debug, (7, 80), "Last RF Updt: " + str(GB.last_weather_update), constants.white)
         GB.main_font_tiny.render_to(GB.surface_debug, (7, 110), "Is Daytime: " + str(GB.is_day_time), constants.white)
         GB.main_font_tiny.render_to(GB.surface_debug, (7, 140), "Tick Timer: " + str(GB.tick_timer), constants.white)
+        GB.main_font_tiny.render_to(GB.surface_debug, (7, 170), "RF Active: " + str(external.Ext_ctrl.rx_thread_running), constants.white)
+        GB.main_font_tiny.render_to(GB.surface_debug, (7, 200), "RF Raw: " + str(external.Ext_ctrl.rx_buffer), constants.white)
     else:
         GB.surface_debug.fill(constants.black) 
