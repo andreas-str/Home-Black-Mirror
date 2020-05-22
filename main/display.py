@@ -222,7 +222,7 @@ def update_weather():
             GB.surface_weather.blit(GB.moon_icon, (290,25))
         else:
 
-            GB.surface_weather.blit(GB.sun_icon, (290,25))
+            #GB.surface_weather.blit(GB.sun_icon, (290,25))
             GB.surface_weather.blit(GB.cloud_icon, (290,25))
 
         if external.Ext_ctrl.new_rx_data == False:
@@ -235,7 +235,7 @@ def update_weather():
 
 def update_notifications():
     GB.surface_notifications.fill(constants.black)
-    GB.main_font_tiny.render_to(GB.surface_notifications, (70, 40), "This is a notification area, maybe", constants.white) 
+    GB.main_font_tiny.render_to(GB.surface_notifications, (30, 200), "This is a notification area, maybe", constants.white) 
 
 
 def debug_info(cond):
