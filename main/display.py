@@ -23,7 +23,7 @@ class GB():
     last_weather_update = 0
     mode = 0
     pygame.freetype.init()
-    main_font = pygame.freetype.Font("fonts/AurulentSansMono-Regular.otf", 130)
+    main_font = pygame.freetype.Font("fonts/AurulentSansMono-Regular.otf", 180)
     main_font_medium = pygame.freetype.Font("fonts/Code New Roman.otf", 70)
     main_font_small = pygame.freetype.Font("fonts/F25_Bank_Printer.ttf", 40)
     main_font_tiny = pygame.freetype.Font("fonts/Code New Roman.otf", 30)
@@ -80,9 +80,9 @@ def update_display(mode):
     GB.screen.fill(constants.black) 
 
     time_now, pm_am_now = get_time()
-    GB.main_font.render_to(GB.screen, (50, 60), time_now, constants.white)
-    GB.main_font_small.render_to(GB.screen, (440, 130), pm_am_now, constants.white)
-    GB.main_font_small.render_to(GB.screen, (120, 195), get_date(), constants.gray1)
+    GB.main_font.render_to(GB.screen, (50, 50), time_now, constants.white)
+    GB.main_font_small.render_to(GB.screen, (575, 165), pm_am_now, constants.white)
+    GB.main_font_small.render_to(GB.screen, (200, 230), get_date(), constants.gray1)
 
     # Things to do only once
     if GB.init_control:
@@ -235,7 +235,7 @@ def update_weather():
 
 def update_notifications():
     GB.surface_notifications.fill(constants.black)
-    GB.main_font_tiny.render_to(GB.surface_notifications, (40, 40), "This is a notification area", constants.white) 
+    GB.main_font_tiny.render_to(GB.surface_notifications, (70, 40), "This is a notification area, maybe", constants.white) 
 
 
 def debug_info(cond):
