@@ -13,12 +13,14 @@ class GB():
     screen = None
     surface_day_main = None
     surface_weather = None
+    surface_debug = None
     running = True
     update_control = True
     init_control = True
-    is_night = False
+    is_day_time = 0
     tick_timer = 0
     last_weather_update = 0
+    mode = 0
     pygame.freetype.init()
     main_font = pygame.freetype.Font("fonts/AurulentSansMono-Regular.otf", 130)
     main_font_medium = pygame.freetype.Font("fonts/Code New Roman.otf", 70)
@@ -56,10 +58,14 @@ def main_display_loop():
             elif event.type == pygame.KEYDOWN:
                 if event.unicode == 'q':
                     GB.running = False
+                elif event.unicode == 'm':
+                    GB.mode += 1
+                    if GB.mode > 1:
+                        GB.mode = 0
                     
         # update display
         if GB.update_control:
-            update_display()
+            update_display(GB.mode)
             pygame.display.update()
         
         #screen_update_control()
@@ -68,7 +74,7 @@ def main_display_loop():
 
     pygame.quit()
 
-def update_display():
+def update_display(mode):
 
     GB.screen.fill(constants.black) 
 
@@ -90,9 +96,16 @@ def update_display():
         update_weather()
         GB.tick_timer = 0
 
+    # Things to do always
+    if mode == 1:
+        debug_info(True)
+    else:
+        debug_info(False)
+
     GB.tick_timer += 1
     GB.screen.blit(GB.surface_day_main, [800,30])
     GB.screen.blit(GB.surface_weather, [800,290])
+    GB.screen.blit(GB.surface_debug, [20,635])
 
 def get_time():
     # convert time to 12 hour format
@@ -110,6 +123,7 @@ def get_date():
 def create_surfaces():
     GB.surface_day_main = pygame.Surface((450, 250))
     GB.surface_weather = pygame.Surface((450, 200))
+    GB.surface_debug = pygame.Surface((800, 300))
 
 def update_day_curve():
 
@@ -137,7 +151,7 @@ def update_day_curve():
 
     if time_now <= time_left:
         # its night now, left
-        GB.is_night = True
+        GB.is_day_time = 0
         # calculate index
         index = constants.map_num(time_now, 0, time_left, 0, 10)
         index = int(index) + 2
@@ -152,10 +166,11 @@ def update_day_curve():
 
     elif time_now > time_left and time_now <= time_middle:
         # its day now
-        GB.is_night = False
         # calculate index
         index = constants.map_num(time_now, time_left, time_middle, 0, 20)
         index = int(index) + 2
+        # save index
+        GB.is_day_time = index
 
         for i in range(0, index):
             data_points.append(constants.day_points_top[i])
@@ -169,7 +184,7 @@ def update_day_curve():
 
     elif time_now > time_middle:
         # its night now, right
-        GB.is_night = True
+        GB.is_day_time = -1
         # calculate index
         index = constants.map_num(time_now, time_middle, 1440, 0, 10)
         index = int(index) + 2
@@ -198,9 +213,10 @@ def update_weather():
         GB.surface_weather.blit(GB.temp_icon, (10,0))
         GB.main_font_medium.render_to(GB.surface_weather, (85, 90), str(Data[1]) + "%", constants.white)
         GB.surface_weather.blit(GB.hum_icon, (5,79))
-        if GB.is_night:
+        if GB.is_day_time == 0 or GB.is_day_time == -1:
             GB.surface_weather.blit(GB.moon_icon, (290,25))
         else:
+
             GB.surface_weather.blit(GB.sun_icon, (290,25))
 
         if external.Ext_ctrl.new_rx_data == False:
@@ -210,3 +226,27 @@ def update_weather():
         else:
             GB.last_weather_update = 0
             external.Ext_ctrl.new_rx_data = False
+
+def debug_info(cond):
+    if cond:
+
+        GB.surface_debug.fill(constants.black) 
+
+        #draw box
+        pygame.draw.lines(GB.surface_debug, constants.gray2, False, [(180,3), (787,3)], 2)
+        pygame.draw.lines(GB.surface_debug, constants.gray2, False, [(180,3), (180,35)], 2)
+        pygame.draw.lines(GB.surface_debug, constants.gray2, False, [(3,35), (180,35)], 2)
+        pygame.draw.lines(GB.surface_debug, constants.gray2, False, [(787,3), (787,297)], 2)
+        pygame.draw.lines(GB.surface_debug, constants.gray2, False, [(3,35), (3,787)], 2)
+        pygame.draw.lines(GB.surface_debug, constants.gray2, False, [(3,297), (787,297)], 2)
+
+        #draw text
+        GB.main_font_tiny.render_to(GB.surface_debug, (7, 7), "Debug info", constants.white)
+
+        #weather
+        GB.main_font_tiny.render_to(GB.surface_debug, (7, 50), "Pi temp: " + str(external.get_pi_temp()), constants.white)
+        GB.main_font_tiny.render_to(GB.surface_debug, (7, 80), "Last RF Updt: " + str(GB.last_weather_update), constants.white)
+        GB.main_font_tiny.render_to(GB.surface_debug, (7, 110), "Is Daytime: " + str(GB.is_day_time), constants.white)
+        GB.main_font_tiny.render_to(GB.surface_debug, (7, 140), "Tick Timer: " + str(GB.tick_timer), constants.white)
+    else:
+        GB.surface_debug.fill(constants.black) 

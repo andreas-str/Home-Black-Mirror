@@ -87,3 +87,9 @@ def get_rf_data():
         return None
     return None
 
+def calculate_sun_brightness(current_time, panel_value):
+    return 0
+
+    
+
+
