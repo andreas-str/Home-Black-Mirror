@@ -109,7 +109,8 @@ def update_display(mode):
     GB.screen.blit(GB.surface_day_main, [800,30])
     GB.screen.blit(GB.surface_weather, [800,290])
     GB.screen.blit(GB.surface_notifications, [20,270])
-    GB.screen.blit(GB.surface_debug, [20,635])
+    #GB.screen.blit(GB.surface_debug, [20,635])
+    GB.screen.blit(GB.surface_debug, [20,0])
 
 def get_time():
     # convert time to 12 hour format
