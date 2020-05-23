@@ -23,7 +23,7 @@ class GB():
     last_weather_update = 0
     mode = 0
     pygame.freetype.init()
-    main_font = pygame.freetype.Font("fonts/AurulentSansMono-Regular.otf", 180)
+    main_font = pygame.freetype.Font("fonts/AurulentSansMono-Regular.otf", 150)
     main_font_medium = pygame.freetype.Font("fonts/Code New Roman.otf", 70)
     main_font_small = pygame.freetype.Font("fonts/F25_Bank_Printer.ttf", 40)
     main_font_tiny = pygame.freetype.Font("fonts/Code New Roman.otf", 30)
@@ -48,7 +48,7 @@ def main_display_loop():
     pygame.mixer.quit()
     # set pygame settings
     pygame.display.set_caption('Black mirror')
-    GB.screen = pygame.display.set_mode((1280,960), pygame.RESIZABLE)
+    GB.screen = pygame.display.set_mode((915,531), pygame.RESIZABLE)
     clock = pygame.time.Clock()
 
     # start loop
@@ -80,9 +80,9 @@ def update_display(mode):
     GB.screen.fill(constants.black) 
 
     time_now, pm_am_now = get_time()
-    GB.main_font.render_to(GB.screen, (50, 50), time_now, constants.white)
-    GB.main_font_small.render_to(GB.screen, (595, 155), pm_am_now, constants.white)
-    GB.main_font_small.render_to(GB.screen, (200, 230), get_date(), constants.gray1)
+    GB.main_font.render_to(GB.screen, (10, 50), time_now, constants.white)
+    #GB.main_font_small.render_to(GB.screen, (595, 100), pm_am_now, constants.white)
+    GB.main_font_small.render_to(GB.screen, (125, 200), get_date(), constants.gray1)
 
     # Things to do only once
     if GB.init_control:
@@ -100,17 +100,14 @@ def update_display(mode):
 
     # Things to do always
     update_notifications()
-    if mode == 1:
-        debug_info(True)
-    else:
-        debug_info(False)
 
     GB.tick_timer += 1
-    GB.screen.blit(GB.surface_day_main, [800,30])
-    GB.screen.blit(GB.surface_weather, [800,290])
-    GB.screen.blit(GB.surface_notifications, [20,270])
-    #GB.screen.blit(GB.surface_debug, [20,635])
-    GB.screen.blit(GB.surface_debug, [20,0])
+    GB.screen.blit(GB.surface_day_main, [475,10])
+    GB.screen.blit(GB.surface_weather, [475,270])
+    if mode == 1:
+        debug_info()
+        GB.screen.blit(GB.surface_debug, [50,50])
+    #GB.screen.blit(GB.surface_notifications, [20,270])
 
 def get_time():
     # convert time to 12 hour format
@@ -128,7 +125,7 @@ def get_date():
 def create_surfaces():
     GB.surface_day_main = pygame.Surface((450, 250))
     GB.surface_weather = pygame.Surface((450, 200))
-    GB.surface_notifications = pygame.Surface((750, 350))
+    GB.surface_notifications = pygame.Surface((450, 350))
     GB.surface_debug = pygame.Surface((750, 300))
 
 def update_day_curve():
@@ -239,28 +236,25 @@ def update_notifications():
     GB.main_font_tiny.render_to(GB.surface_notifications, (30, 200), "This is a notification area, maybe", constants.white) 
 
 
-def debug_info(cond):
-    if cond:
+def debug_info():
 
-        GB.surface_debug.fill(constants.black) 
+    GB.surface_debug.fill(constants.black) 
 
-        #draw box
-        pygame.draw.lines(GB.surface_debug, constants.gray2, False, [(180,3), (747,3)], 2)
-        pygame.draw.lines(GB.surface_debug, constants.gray2, False, [(180,3), (180,35)], 2)
-        pygame.draw.lines(GB.surface_debug, constants.gray2, False, [(3,35), (180,35)], 2)
-        pygame.draw.lines(GB.surface_debug, constants.gray2, False, [(747,3), (747,297)], 2)
-        pygame.draw.lines(GB.surface_debug, constants.gray2, False, [(3,35), (3,747)], 2)
-        pygame.draw.lines(GB.surface_debug, constants.gray2, False, [(3,297), (747,297)], 2)
+    #draw box
+    pygame.draw.lines(GB.surface_debug, constants.gray2, False, [(180,3), (747,3)], 2)
+    pygame.draw.lines(GB.surface_debug, constants.gray2, False, [(180,3), (180,35)], 2)
+    pygame.draw.lines(GB.surface_debug, constants.gray2, False, [(3,35), (180,35)], 2)
+    pygame.draw.lines(GB.surface_debug, constants.gray2, False, [(747,3), (747,297)], 2)
+    pygame.draw.lines(GB.surface_debug, constants.gray2, False, [(3,35), (3,747)], 2)
+    pygame.draw.lines(GB.surface_debug, constants.gray2, False, [(3,297), (747,297)], 2)
 
-        #draw text
-        GB.main_font_tiny.render_to(GB.surface_debug, (7, 7), "Debug info", constants.white)
+    #draw text
+    GB.main_font_tiny.render_to(GB.surface_debug, (7, 7), "Debug info", constants.white)
 
-        #col 1
-        GB.main_font_tiny.render_to(GB.surface_debug, (7, 50), "Pi Temp: " + str(external.get_pi_temp()), constants.white)
-        GB.main_font_tiny.render_to(GB.surface_debug, (7, 80), "Tick Timer: " + str(GB.tick_timer), constants.white)
-        GB.main_font_tiny.render_to(GB.surface_debug, (7, 110), "Is Daytime: " + str(GB.is_day_time), constants.white)
-        GB.main_font_tiny.render_to(GB.surface_debug, (7, 140), "Last RF Updt: " + str(GB.last_weather_update), constants.white)
-        GB.main_font_tiny.render_to(GB.surface_debug, (7, 170), "RF Active: " + str(external.Ext_ctrl.rx_thread_running), constants.white)
-        GB.main_font_tiny.render_to(GB.surface_debug, (7, 200), "RF Raw: " + str(external.Ext_ctrl.rx_buffer), constants.white)
-    else:
-        GB.surface_debug.fill(constants.black) 
+    #col 1
+    GB.main_font_tiny.render_to(GB.surface_debug, (7, 50), "Pi Temp: " + str(external.get_pi_temp()), constants.white)
+    GB.main_font_tiny.render_to(GB.surface_debug, (7, 80), "Tick Timer: " + str(GB.tick_timer), constants.white)
+    GB.main_font_tiny.render_to(GB.surface_debug, (7, 110), "Is Daytime: " + str(GB.is_day_time), constants.white)
+    GB.main_font_tiny.render_to(GB.surface_debug, (7, 140), "Last RF Updt: " + str(GB.last_weather_update), constants.white)
+    GB.main_font_tiny.render_to(GB.surface_debug, (7, 170), "RF Active: " + str(external.Ext_ctrl.rx_thread_running), constants.white)
+    GB.main_font_tiny.render_to(GB.surface_debug, (7, 200), "RF Raw: " + str(external.Ext_ctrl.rx_buffer), constants.white)
