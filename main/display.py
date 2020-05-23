@@ -81,7 +81,7 @@ def update_display(mode):
 
     time_now, pm_am_now = get_time()
     GB.main_font.render_to(GB.screen, (50, 50), time_now, constants.white)
-    GB.main_font_small.render_to(GB.screen, (575, 165), pm_am_now, constants.white)
+    GB.main_font_small.render_to(GB.screen, (595, 155), pm_am_now, constants.white)
     GB.main_font_small.render_to(GB.screen, (200, 230), get_date(), constants.gray1)
 
     # Things to do only once

@@ -29,6 +29,9 @@ def init_devices():
             print("pigpio started")
             #init virtual wire RX 
             Ext_devices.RF_RX_Device = piVirtualWire.rx(Ext_devices.pigpioDevice, 4, 1000)
+            #enable screen
+            Ext_devices.pigpioDevice.set_mode(17, pigpio.OUTPUT)
+            Ext_devices.pigpioDevice.write(17,1)
             print("rx device started")
             #start thread 
             start_rx_thread()
