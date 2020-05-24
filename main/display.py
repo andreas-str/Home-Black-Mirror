@@ -306,7 +306,7 @@ def global_info(timer):
         color = constants.red
         size = 30
     
-    pygame.draw.lines(GB.surface_global_info, constants.white, False, [(0,0), (915,0)], size)
-    pygame.draw.lines(GB.surface_global_info, constants.white, False, [(0,0), (0,531)], size)
-    pygame.draw.lines(GB.surface_global_info, constants.white, False, [(915,0), (915,531)], size)
-    pygame.draw.lines(GB.surface_global_info, constants.white, False, [(0,531), (915,531)], size)
+    pygame.draw.lines(GB.surface_global_info, color, False, [(0,0), (915,0)], size)
+    pygame.draw.lines(GB.surface_global_info, color, False, [(0,0), (0,531)], size)
+    pygame.draw.lines(GB.surface_global_info, color, False, [(915,0), (915,531)], size)
+    pygame.draw.lines(GB.surface_global_info, color, False, [(0,531), (915,531)], size)
