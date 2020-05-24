@@ -37,8 +37,9 @@ class GB():
     moon_icon = pygame.image.load("icons/moon.png")
 
 # force stop the display loop
-def stop_display_loop():
-    GB.intentional_shutdown = True
+def stop_display_loop(cond):
+    if cond:
+        GB.intentional_shutdown = True
     GB.running = False
 
 # main display loop
@@ -135,8 +136,10 @@ def update_display(mode):
             GB.mode += 1
             if GB.mode > 1:
                 GB.mode = 0
+        elif GB.ir_timer >= 5 and GB.ir_timer < 10:
+            stop_display_loop(False)
         elif GB.ir_timer >= 10 and GB.ir_timer < 20:
-            stop_display_loop()
+            stop_display_loop(True)
 
         # update timers
         GB.ir_timer = 0
