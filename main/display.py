@@ -108,9 +108,11 @@ def update_display(mode):
     update_notifications()
 
     # update surfaces
-    GB.screen.blit(GB.surface_day_main, [475,10])
-    GB.screen.blit(GB.surface_weather, [475,270])
-    GB.screen.blit(GB.surface_notifications, [20,270])
+    
+    if mode == 0:
+        GB.screen.blit(GB.surface_day_main, [475,10])
+        GB.screen.blit(GB.surface_weather, [475,270])
+        GB.screen.blit(GB.surface_notifications, [20,270])
     if mode == 1:
         debug_info()
         GB.screen.blit(GB.surface_debug, [80,110])
@@ -120,17 +122,20 @@ def update_display(mode):
         GB.ir_timer += 1
         if GB.tick_timer > 0:
             GB.tick_timer = 0
-        if (GB.ir_timer >= 1 and GB.ir_timer < 5):
-            GB.ir_timer = 0
-            if GB.mode == 0:
-                GB.mode = 1
-            else:
-                GB.mode = 0
+        
         # update surface
         global_info(GB.ir_timer)
         GB.screen.blit(GB.surface_global_info, [0,0])
 
     else:
+        # normal transition
+        if (GB.ir_timer >= 1 and GB.ir_timer < 5):
+            GB.mode += 1
+            if GB.mode > 1:
+                GB.mode = 0
+        elif GB.ir_timer >= 10 and GB.ir_timer < 20:
+            stop_display_loop()
+
         # update timers
         GB.ir_timer = 0
         GB.tick_timer += 1
