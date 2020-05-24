@@ -21,6 +21,7 @@ class GB():
     init_control = True
     is_day_time = 0
     tick_timer = 0
+    ir_timer = 0
     last_weather_update = 0
     mode = 0
     pygame.freetype.init()
@@ -37,10 +38,6 @@ class GB():
 # force stop the display loop
 def stop_display_loop():
     GB.running = False
-
-# allow screen sleep mode
-def screen_update_control():
-    GB.update_control = True
 
 # main display loop
 def main_display_loop():
@@ -90,10 +87,6 @@ def update_display(mode):
 
     GB.screen.fill(constants.black) 
 
-    time_now, pm_am_now = get_time()
-    GB.main_font.render_to(GB.screen, (10, 50), time_now, constants.white)
-    GB.main_font_small.render_to(GB.screen, (125, 200), get_date(), constants.gray1)
-
     # Things to do only once
     if GB.init_control:
         create_surfaces()
@@ -109,18 +102,36 @@ def update_display(mode):
         GB.tick_timer = 0
 
     # Things to do always
+    time_now, pm_am_now = get_time()
+    GB.main_font.render_to(GB.screen, (10, 50), time_now, constants.white)
+    GB.main_font_small.render_to(GB.screen, (125, 200), get_date(), constants.gray1)
     update_notifications()
 
-    GB.tick_timer += 1
-    GB.screen.blit(GB.surface_day_main, [475,10])
-    GB.screen.blit(GB.surface_weather, [475,270])
-    if mode == 1:
-        debug_info()
-        GB.screen.blit(GB.surface_debug, [80,110])
-    elif mode == 2:
+    # check ir sensor
+    if external.check_ir_sensor():
+        GB.ir_timer += 1
+        if GB.tick_timer > 0:
+            GB.tick_timer = 0
+        if (GB.ir_timer > 2 and GB.ir_timer < 5):
+            GB.ir_timer = 0
+            if GB.mode == 0:
+                GB.mode = 1
+            else:
+                GB.mode = 0
+        # update info surface
         global_info()
         GB.screen.blit(GB.surface_global_info, [0,0])
-    #GB.screen.blit(GB.surface_notifications, [20,270])
+
+    else:
+        # update other surfaces
+        GB.ir_timer = 0
+        GB.tick_timer += 1
+        GB.screen.blit(GB.surface_day_main, [475,10])
+        GB.screen.blit(GB.surface_weather, [475,270])
+        GB.screen.blit(GB.surface_notifications, [20,270])
+        if mode == 1:
+            debug_info()
+            GB.screen.blit(GB.surface_debug, [80,110])
 
 def get_time():
     # convert time to 12 hour format
@@ -247,7 +258,7 @@ def update_weather():
 
 def update_notifications():
     GB.surface_notifications.fill(constants.black)
-    GB.main_font_tiny.render_to(GB.surface_notifications, (30, 200), "This is a notification area, maybe", constants.white) 
+    GB.main_font_tiny.render_to(GB.surface_notifications, (0, 150), "This is a notification area", constants.white) 
 
 
 def debug_info():

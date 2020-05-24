@@ -32,6 +32,8 @@ def init_devices():
             #enable screen
             Ext_devices.pigpioDevice.set_mode(17, pigpio.OUTPUT)
             Ext_devices.pigpioDevice.write(17,1)
+            #setup ir sensor
+            Ext_devices.pigpioDevice.set_mode(18, pigpio.INPUT)
             print("rx device started")
             #start thread 
             start_rx_thread()
@@ -93,6 +95,8 @@ def get_rf_data():
 def calculate_sun_brightness(current_time, panel_value):
     return 0
 
-    
-
-
+def check_ir_sensor():
+    if using_pi:
+        return Ext_devices.pigpioDevice.read(18)
+    else:
+        return 0
