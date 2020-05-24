@@ -304,7 +304,8 @@ def global_info(timer):
         color = constants.red
     elif timer >= 10 and timer < 20:
         color = constants.red
-        size = 30
+        size = 50
+        GB.main_font_medium.render_to(GB.surface_global_info, (200, 55), "Shutting down", constants.red)
     
     pygame.draw.lines(GB.surface_global_info, color, False, [(0,0), (915,0)], size)
     pygame.draw.lines(GB.surface_global_info, color, False, [(0,0), (0,531)], size)
