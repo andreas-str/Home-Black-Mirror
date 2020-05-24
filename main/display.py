@@ -107,6 +107,14 @@ def update_display(mode):
     GB.main_font_small.render_to(GB.screen, (125, 200), get_date(), constants.gray1)
     update_notifications()
 
+    # update surfaces
+    GB.screen.blit(GB.surface_day_main, [475,10])
+    GB.screen.blit(GB.surface_weather, [475,270])
+    GB.screen.blit(GB.surface_notifications, [20,270])
+    if mode == 1:
+        debug_info()
+        GB.screen.blit(GB.surface_debug, [80,110])
+
     # check ir sensor
     if external.check_ir_sensor():
         GB.ir_timer += 1
@@ -127,12 +135,6 @@ def update_display(mode):
         GB.ir_timer = 0
         GB.tick_timer += 1
 
-    GB.screen.blit(GB.surface_day_main, [475,10])
-    GB.screen.blit(GB.surface_weather, [475,270])
-    GB.screen.blit(GB.surface_notifications, [20,270])
-    if mode == 1:
-        debug_info()
-        GB.screen.blit(GB.surface_debug, [80,110])
 
 def get_time():
     # convert time to 12 hour format
