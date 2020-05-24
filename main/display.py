@@ -14,6 +14,7 @@ class GB():
     surface_day_main = None
     surface_weather = None
     surface_notifications = None
+    surface_global_info = None
     surface_debug = None
     running = True
     update_control = True
@@ -48,8 +49,13 @@ def main_display_loop():
     pygame.mixer.quit()
     # set pygame settings
     pygame.display.set_caption('Black mirror')
-    GB.screen = pygame.display.set_mode((915,531), pygame.RESIZABLE)
+    if external.using_pi:
+        GB.screen = pygame.display.set_mode((915,531), pygame.FULLSCREEN)
+    else:
+        GB.screen = pygame.display.set_mode((915,531), pygame.RESIZABLE)
     clock = pygame.time.Clock()
+    #hide mouse
+    pygame.mouse.set_visible(False)
 
     # start loop
     while GB.running:
@@ -61,8 +67,13 @@ def main_display_loop():
                     GB.running = False
                 elif event.unicode == 'm':
                     GB.mode += 1
-                    if GB.mode > 1:
+                    if GB.mode > 2:
                         GB.mode = 0
+                elif event.unicode == 'f':
+                    if GB.screen.get_flags() & pygame.FULLSCREEN:
+                        pygame.display.set_mode((915,531))
+                    else:
+                        pygame.display.set_mode((915,531), pygame.FULLSCREEN)
                     
         # update display
         if GB.update_control:
@@ -81,7 +92,6 @@ def update_display(mode):
 
     time_now, pm_am_now = get_time()
     GB.main_font.render_to(GB.screen, (10, 50), time_now, constants.white)
-    #GB.main_font_small.render_to(GB.screen, (595, 100), pm_am_now, constants.white)
     GB.main_font_small.render_to(GB.screen, (125, 200), get_date(), constants.gray1)
 
     # Things to do only once
@@ -106,7 +116,10 @@ def update_display(mode):
     GB.screen.blit(GB.surface_weather, [475,270])
     if mode == 1:
         debug_info()
-        GB.screen.blit(GB.surface_debug, [50,50])
+        GB.screen.blit(GB.surface_debug, [80,110])
+    elif mode == 2:
+        global_info()
+        GB.screen.blit(GB.surface_global_info, [0,0])
     #GB.screen.blit(GB.surface_notifications, [20,270])
 
 def get_time():
@@ -126,6 +139,7 @@ def create_surfaces():
     GB.surface_day_main = pygame.Surface((450, 250))
     GB.surface_weather = pygame.Surface((450, 200))
     GB.surface_notifications = pygame.Surface((450, 350))
+    GB.surface_global_info = pygame.Surface((915,531), pygame.SRCALPHA)
     GB.surface_debug = pygame.Surface((750, 300))
 
 def update_day_curve():
@@ -258,3 +272,12 @@ def debug_info():
     GB.main_font_tiny.render_to(GB.surface_debug, (7, 140), "Last RF Updt: " + str(GB.last_weather_update), constants.white)
     GB.main_font_tiny.render_to(GB.surface_debug, (7, 170), "RF Active: " + str(external.Ext_ctrl.rx_thread_running), constants.white)
     GB.main_font_tiny.render_to(GB.surface_debug, (7, 200), "RF Raw: " + str(external.Ext_ctrl.rx_buffer), constants.white)
+
+def global_info():
+
+    GB.surface_global_info.fill(constants.dim) 
+
+    pygame.draw.lines(GB.surface_global_info, constants.white, False, [(0,0), (915,0)], 15)
+    pygame.draw.lines(GB.surface_global_info, constants.white, False, [(0,0), (0,531)], 15)
+    pygame.draw.lines(GB.surface_global_info, constants.white, False, [(915,0), (915,531)], 15)
+    pygame.draw.lines(GB.surface_global_info, constants.white, False, [(0,531), (915,531)], 15)

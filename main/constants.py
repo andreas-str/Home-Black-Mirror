@@ -6,6 +6,7 @@ moon_blue = 74,107,150
 gray1 = 200,200,200
 gray2 = 180,180,180
 gray3 = 160,160,160
+dim = 0, 0, 0, 190
 
 day_points_btm_left = [
                     (25,125),
