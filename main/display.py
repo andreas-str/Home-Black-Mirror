@@ -112,26 +112,27 @@ def update_display(mode):
         GB.ir_timer += 1
         if GB.tick_timer > 0:
             GB.tick_timer = 0
-        if (GB.ir_timer > 2 and GB.ir_timer < 5):
+        if (GB.ir_timer >= 1 and GB.ir_timer < 5):
             GB.ir_timer = 0
             if GB.mode == 0:
                 GB.mode = 1
             else:
                 GB.mode = 0
-        # update info surface
-        global_info()
+        # update surface
+        global_info(GB.ir_timer)
         GB.screen.blit(GB.surface_global_info, [0,0])
 
     else:
-        # update other surfaces
+        # update timers
         GB.ir_timer = 0
         GB.tick_timer += 1
-        GB.screen.blit(GB.surface_day_main, [475,10])
-        GB.screen.blit(GB.surface_weather, [475,270])
-        GB.screen.blit(GB.surface_notifications, [20,270])
-        if mode == 1:
-            debug_info()
-            GB.screen.blit(GB.surface_debug, [80,110])
+
+    GB.screen.blit(GB.surface_day_main, [475,10])
+    GB.screen.blit(GB.surface_weather, [475,270])
+    GB.screen.blit(GB.surface_notifications, [20,270])
+    if mode == 1:
+        debug_info()
+        GB.screen.blit(GB.surface_debug, [80,110])
 
 def get_time():
     # convert time to 12 hour format
@@ -284,7 +285,7 @@ def debug_info():
     GB.main_font_tiny.render_to(GB.surface_debug, (7, 170), "RF Active: " + str(external.Ext_ctrl.rx_thread_running), constants.white)
     GB.main_font_tiny.render_to(GB.surface_debug, (7, 200), "RF Raw: " + str(external.Ext_ctrl.rx_buffer), constants.white)
 
-def global_info():
+def global_info(timer):
 
     GB.surface_global_info.fill(constants.dim) 
 
@@ -292,3 +293,6 @@ def global_info():
     pygame.draw.lines(GB.surface_global_info, constants.white, False, [(0,0), (0,531)], 15)
     pygame.draw.lines(GB.surface_global_info, constants.white, False, [(915,0), (915,531)], 15)
     pygame.draw.lines(GB.surface_global_info, constants.white, False, [(0,531), (915,531)], 15)
+
+    if timer >= 5:
+        GB.main_font_tiny.render_to(GB.surface_global_info, (7, 200), "AAAAAA", constants.white)
