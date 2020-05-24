@@ -18,6 +18,7 @@ class GB():
     surface_debug = None
     running = True
     update_control = True
+    intentional_shutdown = False
     init_control = True
     is_day_time = 0
     tick_timer = 0
@@ -37,6 +38,7 @@ class GB():
 
 # force stop the display loop
 def stop_display_loop():
+    GB.intentional_shutdown = True
     GB.running = False
 
 # main display loop
@@ -80,8 +82,8 @@ def main_display_loop():
         #screen_update_control()
         # set fps
         clock.tick(1)
-
     pygame.quit()
+    return GB.intentional_shutdown
 
 def update_display(mode):
 
@@ -103,13 +105,13 @@ def update_display(mode):
 
     # Things to do always
     time_now, pm_am_now = get_time()
-    GB.main_font.render_to(GB.screen, (10, 50), time_now, constants.white)
-    GB.main_font_small.render_to(GB.screen, (125, 200), get_date(), constants.gray1)
     update_notifications()
 
     # update surfaces
     
     if mode == 0:
+        GB.main_font.render_to(GB.screen, (10, 50), time_now, constants.white)
+        GB.main_font_small.render_to(GB.screen, (125, 200), get_date(), constants.gray1)
         GB.screen.blit(GB.surface_day_main, [475,10])
         GB.screen.blit(GB.surface_weather, [475,270])
         GB.screen.blit(GB.surface_notifications, [20,270])
@@ -295,11 +297,16 @@ def debug_info():
 def global_info(timer):
 
     GB.surface_global_info.fill(constants.dim) 
+    color = constants.white
+    size = 15
 
-    pygame.draw.lines(GB.surface_global_info, constants.white, False, [(0,0), (915,0)], 15)
-    pygame.draw.lines(GB.surface_global_info, constants.white, False, [(0,0), (0,531)], 15)
-    pygame.draw.lines(GB.surface_global_info, constants.white, False, [(915,0), (915,531)], 15)
-    pygame.draw.lines(GB.surface_global_info, constants.white, False, [(0,531), (915,531)], 15)
-
-    if timer >= 5:
-        GB.main_font_tiny.render_to(GB.surface_global_info, (7, 200), "AAAAAA", constants.white)
+    if timer >= 5 and timer < 10:
+        color = constants.red
+    elif timer >= 10 and timer < 20:
+        color = constants.red
+        size = 30
+    
+    pygame.draw.lines(GB.surface_global_info, constants.white, False, [(0,0), (915,0)], size)
+    pygame.draw.lines(GB.surface_global_info, constants.white, False, [(0,0), (0,531)], size)
+    pygame.draw.lines(GB.surface_global_info, constants.white, False, [(915,0), (915,531)], size)
+    pygame.draw.lines(GB.surface_global_info, constants.white, False, [(0,531), (915,531)], size)

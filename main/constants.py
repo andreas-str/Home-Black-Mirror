@@ -2,6 +2,7 @@ location = "Amsterdam"
 black = 0, 0, 0
 white = 255,255,255
 yellow = 250,255,0
+red = 255,0,0
 moon_blue = 74,107,150
 gray1 = 200,200,200
 gray2 = 180,180,180
