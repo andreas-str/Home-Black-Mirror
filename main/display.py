@@ -9,8 +9,7 @@ import pygame.gfxdraw
 from astral.sun import sun
 from astral.geocoder import database, lookup
 
-main_path = pathlib.Path("main.py").resolve().as_posix()
-main_path = main_path.replace('/main.py', '')
+main_path = pathlib.Path(__file__).parent.as_posix()
 fonts_path = str(main_path) + "/fonts"
 icons_path = str(main_path) + "/icons"
 
