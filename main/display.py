@@ -2,11 +2,16 @@ import external
 import constants
 import time
 import datetime
+import pathlib
 import pygame
 import pygame.freetype
 import pygame.gfxdraw
 from astral.sun import sun
 from astral.geocoder import database, lookup
+
+main_path = str(pathlib.Path().absolute())
+fonts_path = str(main_path) + "\\fonts"
+icons_path = str(main_path) + "\\icons"
 
 # Globals pls dont kill me I know ok
 class GB():
@@ -26,15 +31,15 @@ class GB():
     last_weather_update = 0
     mode = 0
     pygame.freetype.init()
-    main_font = pygame.freetype.Font("fonts/AurulentSansMono-Regular.otf", 150)
-    main_font_medium = pygame.freetype.Font("fonts/Code New Roman.otf", 70)
-    main_font_small = pygame.freetype.Font("fonts/F25_Bank_Printer.ttf", 40)
-    main_font_tiny = pygame.freetype.Font("fonts/Code New Roman.otf", 30)
-    temp_icon = pygame.image.load("icons/temp_icon.png")
-    hum_icon = pygame.image.load("icons/hum_icon.png")
-    sun_icon = pygame.image.load("icons/sun.png")
-    cloud_icon = pygame.image.load("icons/cloud.png")
-    moon_icon = pygame.image.load("icons/moon.png")
+    main_font = pygame.freetype.Font(fonts_path + "\\AurulentSansMono-Regular.otf", 150)
+    main_font_medium = pygame.freetype.Font(fonts_path + "\\Code New Roman.otf", 70)
+    main_font_small = pygame.freetype.Font(fonts_path + "\\F25_Bank_Printer.ttf", 40)
+    main_font_tiny = pygame.freetype.Font(fonts_path + "\\Code New Roman.otf", 30)
+    temp_icon = pygame.image.load(icons_path+ "\\temp_icon.png")
+    hum_icon = pygame.image.load(icons_path+ "\\hum_icon.png")
+    sun_icon = pygame.image.load(icons_path+ "\\sun.png")
+    cloud_icon = pygame.image.load(icons_path+ "\\cloud.png")
+    moon_icon = pygame.image.load(icons_path+ "\\moon.png")
 
 # force stop the display loop
 def stop_display_loop(cond):
