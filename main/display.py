@@ -14,6 +14,8 @@ main_path = main_path.replace('/main.py', '')
 fonts_path = str(main_path) + "/fonts"
 icons_path = str(main_path) + "/icons"
 
+print(fonts_path)
+
 # Globals pls dont kill me I know ok
 class GB():
     screen = None
