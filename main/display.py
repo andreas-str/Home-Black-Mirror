@@ -8,7 +8,7 @@ import pygame.gfxdraw
 from astral.sun import sun
 from astral.geocoder import database, lookup
 
-# Globals
+# Globals pls dont kill me I know ok
 class GB():
     screen = None
     surface_day_main = None
@@ -104,34 +104,14 @@ def update_display(mode):
         update_weather()
         GB.tick_timer = 0
 
-    # Things to do always
-    time_now, pm_am_now = get_time()
-    update_notifications()
-
-    # update surfaces
-    
-    if mode == 0:
-        GB.main_font.render_to(GB.screen, (10, 50), time_now, constants.white)
-        GB.main_font_small.render_to(GB.screen, (125, 200), get_date(), constants.gray1)
-        GB.screen.blit(GB.surface_day_main, [475,10])
-        GB.screen.blit(GB.surface_weather, [475,270])
-        GB.screen.blit(GB.surface_notifications, [20,270])
-    if mode == 1:
-        debug_info()
-        GB.screen.blit(GB.surface_debug, [80,110])
-
-    # check ir sensor
+    # check ir sensor and count apropriately 
     if external.check_ir_sensor():
         GB.ir_timer += 1
+        #reset main timer
         if GB.tick_timer > 0:
             GB.tick_timer = 0
-        
-        # update surface
-        global_info(GB.ir_timer)
-        GB.screen.blit(GB.surface_global_info, [0,0])
-
     else:
-        # normal transition
+        # normal transition, change modes
         if (GB.ir_timer >= 1 and GB.ir_timer < 5):
             GB.mode += 1
             if GB.mode > 1:
@@ -144,6 +124,25 @@ def update_display(mode):
         # update timers
         GB.ir_timer = 0
         GB.tick_timer += 1
+    
+    # update surfaces
+    if mode == 0:  #main mode
+        time_now, pm_am_now = get_time()
+        update_notifications()
+        GB.main_font.render_to(GB.screen, (10, 50), time_now, constants.white)
+        GB.main_font_small.render_to(GB.screen, (125, 200), get_date(), constants.gray1)
+        GB.screen.blit(GB.surface_day_main, [475,10])
+        GB.screen.blit(GB.surface_weather, [475,270])
+        GB.screen.blit(GB.surface_notifications, [20,270])
+    if mode == 1:  #debug mode
+        debug_info()
+        GB.screen.blit(GB.surface_debug, [80,110])
+    
+    #check ir again lastly, so info surface is on top
+    if external.check_ir_sensor():
+        # update info surface
+        global_info(GB.ir_timer)
+        GB.screen.blit(GB.surface_global_info, [0,0])
 
 
 def get_time():
