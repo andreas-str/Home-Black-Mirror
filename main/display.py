@@ -8,12 +8,22 @@ import pygame.freetype
 import pygame.gfxdraw
 from astral.sun import sun
 from astral.geocoder import database, lookup
+import sq_database
 
 main_path = pathlib.Path(__file__).parent.as_posix()
 fonts_path = str(main_path) + "/fonts"
 icons_path = str(main_path) + "/icons"
 
-print(fonts_path)
+
+#data = sq_database.get_data_today()
+#data = (22, 99, 999, 1, "axxxx", 5)
+#sq_database.update_database(data)
+#data = sq_database.get_data_today()
+#sq_database.add_yesterday_database_data(data)
+#data = sq_database.get_data_today()
+#data2 = sq_database.get_data_yesterday()
+#data = 0
+
 
 # Globals pls dont kill me I know ok
 class GB():
@@ -143,6 +153,7 @@ def update_display(mode):
         GB.screen.blit(GB.surface_notifications, [20,270])
     if mode == 1:  #debug mode
         debug_info()
+        draw_graph(0)
         GB.screen.blit(GB.surface_debug, [80,110])
     
     #check ir again lastly, so info surface is on top
@@ -157,6 +168,11 @@ def get_time():
     tfhour = time.strptime(str(datetime.datetime.now().time().hour) + ":" + str(datetime.datetime.now().time().minute), "%H:%M")
     twhour_now = time.strftime( "%I:%M", tfhour)
     pm_am_now = time.strftime( "%p", tfhour)
+
+    #after midnight, move todays data to yesterdays data on the database
+    if(datetime.datetime.now().time().hour > 23):
+        data = sq_database.get_data_today()
+        sq_database.add_yesterday_database_data(data)
 
     return twhour_now, pm_am_now
 
@@ -274,6 +290,10 @@ def update_weather():
         else:
             GB.last_weather_update = 0
             external.Ext_ctrl.new_rx_data = False
+            #get hour and save current data to todays database
+            current_hour = datetime.datetime.now().time().hour
+            weather_data = (int(Data[0]), int(Data[1]), int(Data[2]), current_hour, get_date(), current_hour)
+            sq_database.update_database(weather_data)
 
 def update_notifications():
     GB.surface_notifications.fill(constants.black)
@@ -320,3 +340,7 @@ def global_info(timer):
     pygame.draw.lines(GB.surface_global_info, color, False, [(0,0), (0,531)], size)
     pygame.draw.lines(GB.surface_global_info, color, False, [(915,0), (915,531)], size)
     pygame.draw.lines(GB.surface_global_info, color, False, [(0,531), (915,531)], size)
+
+def draw_graph(type):
+    data = sq_database.get_data_today()
+    print (data)
