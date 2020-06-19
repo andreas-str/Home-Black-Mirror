@@ -358,10 +358,6 @@ def draw_graph(type):
     pygame.draw.lines(surface_temp, constants.white, False, [(0,0), (0,128), (850,128)], 2)
     pygame.draw.lines(surface_hum, constants.white, False, [(0,0), (0,128), (850,128)], 2)
     pygame.draw.lines(surface_sun, constants.white, False, [(0,0), (0,128), (850,128)], 2)
-    #draw texts
-    GB.main_font_small.render_to(surface_temp, (265, 15), "Temperature", constants.gray4)
-    GB.main_font_small.render_to(surface_hum, (305, 15), "Humidity", constants.gray4)
-    GB.main_font_small.render_to(surface_sun, (305, 15), "Sunlight", constants.gray4)
 
     if type == 1:
         data = sq_database.get_data_today()
@@ -430,6 +426,11 @@ def draw_graph(type):
     pygame.gfxdraw.filled_polygon(surface_temp, temp_points, constants.white)
     pygame.gfxdraw.filled_polygon(surface_hum, hum_points, constants.white)
     pygame.gfxdraw.filled_polygon(surface_sun, panel_points, constants.white)
+
+    #draw texts
+    GB.main_font_small.render_to(surface_temp, (265, 15), "Temperature", constants.gray4)
+    GB.main_font_small.render_to(surface_hum, (305, 15), "Humidity", constants.gray4)
+    GB.main_font_small.render_to(surface_sun, (305, 15), "Sunlight", constants.gray4)
 
     #add surfaces to main surface and return
     surface_main.blit(surface_temp, [53,45])
