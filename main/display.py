@@ -128,10 +128,10 @@ def update_display(mode):
     else:
         # normal transition, change modes
         if (GB.ir_timer >= 1 and GB.ir_timer < 5):
-            mode += 1
+            GB.mode += 1
             GB.update_graph = False
-            if mode > 3:
-                mode = 0
+            if GB.mode > 3:
+                GB.mode = 0
         elif GB.ir_timer >= 5 and GB.ir_timer < 10:
             stop_display_loop(False)
         elif GB.ir_timer >= 10 and GB.ir_timer < 20:
@@ -142,7 +142,7 @@ def update_display(mode):
         GB.tick_timer += 1
     
     # update surfaces
-    if mode == 0:  #main mode
+    if GB.mode == 0:  #main mode
         time_now, pm_am_now = get_time()
         update_notifications()
         GB.main_font.render_to(GB.screen, (10, 50), time_now, constants.white)
@@ -150,17 +150,17 @@ def update_display(mode):
         GB.screen.blit(GB.surface_day_main, [475,10])
         GB.screen.blit(GB.surface_weather, [475,270])
         GB.screen.blit(GB.surface_notifications, [20,270])
-    elif mode == 1: #today graph
+    elif GB.mode == 1: #today graph
         if GB.update_graph == False:
             GB.surface_graph = draw_graph(1)
             GB.update_graph = True
         GB.screen.blit(GB.surface_graph, [0,0])
-    elif mode == 2: #yesterday graph
+    elif GB.mode == 2: #yesterday graph
         if GB.update_graph == False:
             GB.surface_graph = draw_graph(2)
             GB.update_graph = True
         GB.screen.blit(GB.surface_graph, [0,0])
-    if mode == 3:  #debug mode
+    elif GB.mode == 3:  #debug mode
         debug_info()
         draw_graph(0)
         GB.screen.blit(GB.surface_debug, [80,110])
