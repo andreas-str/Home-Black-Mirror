@@ -76,7 +76,7 @@ def empty_today_database_data():
                                     date = 0
                                     WHERE ID = ?'''
     for i in range(24):
-        db_cursor.execute(sql_empty_today_data, (i+1,))
+        db_cursor.execute(sql_empty_today_data, i+1)
         db_connection.commit()
 
 def update_database(data):
