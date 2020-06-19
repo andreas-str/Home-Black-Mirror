@@ -1,6 +1,10 @@
 import sqlite3
+import pathlib
 
-db_connection = sqlite3.connect('main_data.db')
+main_path = pathlib.Path(__file__).parent.as_posix()
+db_path = str(main_path) + "/main_data.db"
+
+db_connection = sqlite3.connect(db_path)
 db_cursor = db_connection.cursor()
 
 def create_database_tables():
@@ -61,6 +65,18 @@ def add_yesterday_database_data(data):
                 shifted_data[i] = first_bit
         final_data = tuple(shifted_data)
         db_cursor.execute(sql_update_weather_yesterday_data, final_data)
+        db_connection.commit()
+
+def empty_today_database_data():
+    sql_empty_today_data = '''UPDATE weather_today SET
+                                    temperature = 0,
+                                    humidity = 0,
+                                    solar = 0,
+                                    hour = 0,
+                                    date = 0
+                                    WHERE ID = ?'''
+    for i in range(24):
+        db_cursor.execute(sql_empty_today_data, i+1)
         db_connection.commit()
 
 def update_database(data):

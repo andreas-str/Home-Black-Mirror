@@ -15,16 +15,6 @@ fonts_path = str(main_path) + "/fonts"
 icons_path = str(main_path) + "/icons"
 
 
-#data = sq_database.get_data_today()
-#data = (22, 99, 999, 1, "axxxx", 5)
-#sq_database.update_database(data)
-#data = sq_database.get_data_today()
-#sq_database.add_yesterday_database_data(data)
-#data = sq_database.get_data_today()
-#data2 = sq_database.get_data_yesterday()
-#data = 0
-
-
 # Globals pls dont kill me I know ok
 class GB():
     screen = None
@@ -33,6 +23,7 @@ class GB():
     surface_notifications = None
     surface_global_info = None
     surface_debug = None
+    surface_graph = None
     running = True
     update_control = True
     intentional_shutdown = False
@@ -42,6 +33,7 @@ class GB():
     ir_timer = 0
     last_weather_update = 0
     mode = 0
+    update_graph = False
     pygame.freetype.init()
     main_font = pygame.freetype.Font(fonts_path + "/AurulentSansMono_Regular.ttf", 150)
     main_font_medium = pygame.freetype.Font(fonts_path + "/Code_New_Roman.ttf", 70)
@@ -84,7 +76,8 @@ def main_display_loop():
                     GB.running = False
                 elif event.unicode == 'm':
                     GB.mode += 1
-                    if GB.mode > 2:
+                    GB.update_graph = False
+                    if GB.mode > 3:
                         GB.mode = 0
                 elif event.unicode == 'f':
                     if GB.screen.get_flags() & pygame.FULLSCREEN:
@@ -120,6 +113,11 @@ def update_display(mode):
         update_day_curve()
         update_weather()
         GB.tick_timer = 0
+        #after midnight, move todays data to yesterdays data on the database
+        if(datetime.datetime.now().time().hour == 0 and datetime.datetime.now().time().minute <= 1):
+            data = sq_database.get_data_today()
+            sq_database.add_yesterday_database_data(data)
+            sq_database.empty_today_database_data()
 
     # check ir sensor and count apropriately 
     if external.check_ir_sensor():
@@ -131,7 +129,8 @@ def update_display(mode):
         # normal transition, change modes
         if (GB.ir_timer >= 1 and GB.ir_timer < 5):
             GB.mode += 1
-            if GB.mode > 1:
+            GB.update_graph = False
+            if GB.mode > 3:
                 GB.mode = 0
         elif GB.ir_timer >= 5 and GB.ir_timer < 10:
             stop_display_loop(False)
@@ -151,7 +150,17 @@ def update_display(mode):
         GB.screen.blit(GB.surface_day_main, [475,10])
         GB.screen.blit(GB.surface_weather, [475,270])
         GB.screen.blit(GB.surface_notifications, [20,270])
-    if mode == 1:  #debug mode
+    elif mode == 1: #today graph
+        if GB.update_graph == False:
+            GB.surface_graph = draw_graph(1)
+            GB.update_graph = True
+        GB.screen.blit(GB.surface_graph, [0,0])
+    elif mode == 2: #yesterday graph
+        if GB.update_graph == False:
+            GB.surface_graph = draw_graph(2)
+            GB.update_graph = True
+        GB.screen.blit(GB.surface_graph, [0,0])
+    if mode == 3:  #debug mode
         debug_info()
         draw_graph(0)
         GB.screen.blit(GB.surface_debug, [80,110])
@@ -168,11 +177,6 @@ def get_time():
     tfhour = time.strptime(str(datetime.datetime.now().time().hour) + ":" + str(datetime.datetime.now().time().minute), "%H:%M")
     twhour_now = time.strftime( "%I:%M", tfhour)
     pm_am_now = time.strftime( "%p", tfhour)
-
-    #after midnight, move todays data to yesterdays data on the database
-    if(datetime.datetime.now().time().hour > 23):
-        data = sq_database.get_data_today()
-        sq_database.add_yesterday_database_data(data)
 
     return twhour_now, pm_am_now
 
@@ -335,12 +339,102 @@ def global_info(timer):
         color = constants.red
         size = 50
         GB.main_font_medium.render_to(GB.surface_global_info, (200, 55), "Shutting down", constants.red)
-    
-    pygame.draw.lines(GB.surface_global_info, color, False, [(0,0), (915,0)], size)
-    pygame.draw.lines(GB.surface_global_info, color, False, [(0,0), (0,531)], size)
-    pygame.draw.lines(GB.surface_global_info, color, False, [(915,0), (915,531)], size)
-    pygame.draw.lines(GB.surface_global_info, color, False, [(0,531), (915,531)], size)
+
+    pygame.draw.lines(GB.surface_global_info, color, True, [(0,0), (915,0), (915,531), (0,531)], size)
 
 def draw_graph(type):
-    data = sq_database.get_data_today()
-    print (data)
+    data = None
+    temp_points = [(0,0)]*24
+    hum_points = [(0,0)]*24
+    panel_points = [(0,0)]*24
+    surface_main = pygame.Surface((915,531))
+    surface_temp = pygame.Surface((852, 130))
+    surface_hum = pygame.Surface((852, 130))
+    surface_sun = pygame.Surface((852, 130))
+    #fill em black
+    surface_temp.fill(constants.black) 
+    surface_hum.fill(constants.black) 
+    surface_sun.fill(constants.black)
+    #draw boxes
+    pygame.draw.lines(surface_temp, constants.white, False, [(0,0), (0,128), (850,128)], 2)
+    pygame.draw.lines(surface_hum, constants.white, False, [(0,0), (0,128), (850,128)], 2)
+    pygame.draw.lines(surface_sun, constants.white, False, [(0,0), (0,128), (850,128)], 2)
+    #draw texts
+    GB.main_font_small.render_to(surface_temp, (265, 15), "Temperature", constants.gray4)
+    GB.main_font_small.render_to(surface_hum, (305, 15), "Humidity", constants.gray4)
+    GB.main_font_small.render_to(surface_sun, (305, 15), "Sunlight", constants.gray4)
+
+    if type == 1:
+        data = sq_database.get_data_today()
+        GB.main_font_small.render_to(surface_main, (380, 0), "Today", constants.white)
+    elif type == 2:
+        data = sq_database.get_data_yesterday()
+        GB.main_font_small.render_to(surface_main, (340, 5), "Yesterday", constants.white)
+
+    if data == None:
+        GB.main_font_small.render_to(surface_main, (340, 100), "No Data!", constants.white)
+        return surface_main
+    #init values, reversed for sorting
+    min_max_temp = [99, 0]
+    min_max_hum = [99, 0]
+    min_max_panel = [999, 0]
+    for i in range(24):
+        #find mins
+        if data[i][1] > 0 and data[i][1] < min_max_temp[0]:
+            min_max_temp[0] = data[i][1]
+        if data[i][2] > 0 and data[i][2] < min_max_hum[0]:
+            min_max_hum[0] = data[i][2]
+        if data[i][3] > 0 and data[i][3] < min_max_panel[0]:
+            min_max_panel[0] = data[i][3]
+        #find maxs
+        if data[i][1] > 0 and data[i][1] > min_max_temp[1]:
+            min_max_temp[1] = data[i][1]
+        if data[i][2] > 0 and data[i][2] > min_max_hum[1]:
+            min_max_hum[1] = data[i][2]
+        if data[i][3] > 0 and data[i][3] > min_max_panel[1]:
+            min_max_panel[1] = data[i][3]
+
+    #draw min max
+    GB.main_font_tiny.render_to(surface_main, (15, 45), str(min_max_temp[1]), constants.white)
+    GB.main_font_tiny.render_to(surface_main, (15, 155), str(min_max_temp[0]), constants.white)
+    GB.main_font_tiny.render_to(surface_main, (15, 210), str(min_max_hum[1]), constants.white)
+    GB.main_font_tiny.render_to(surface_main, (15, 320), str(min_max_hum[0]), constants.white)
+    GB.main_font_tiny.render_to(surface_main, (0, 375), str(min_max_panel[1]), constants.white)
+    GB.main_font_tiny.render_to(surface_main, (0, 485), str(min_max_panel[0]), constants.white)
+
+    for i in range(0,7):
+        GB.main_font_tiny.render_to(surface_main, (50+(i*137), 180), str(i*4), constants.white)
+        GB.main_font_tiny.render_to(surface_main, (50+(i*137), 345), str(i*4), constants.white)
+        GB.main_font_tiny.render_to(surface_main, (50+(i*137), 510), str(i*4), constants.white)
+
+    for graph_data in data:
+        if graph_data[1] > 0 and min_max_temp[1] != min_max_temp[0]:
+            point = int(constants.map_num(graph_data[1], min_max_temp[0], min_max_temp[1], 0, 130))
+            temp_points[graph_data[0]-1] = ((((graph_data[0]-1) * 37), 130-point))
+        else:
+            temp_points[graph_data[0]-1] = ((((graph_data[0]-1) * 37), 130))
+        if graph_data[2] > 0 and min_max_hum[1] != min_max_hum[0]:
+            point = int(constants.map_num(graph_data[2], min_max_hum[0], min_max_hum[1], 0, 130))
+            hum_points[graph_data[0]-1] = ((((graph_data[0]-1) * 37), 130-point))
+        else:
+            hum_points[graph_data[0]-1] = ((((graph_data[0]-1) * 37), 130))
+        if graph_data[3] > 0 and min_max_panel[1] != min_max_panel[0]:
+            point = int(constants.map_num(graph_data[3], min_max_panel[0], min_max_panel[1], 0, 130))
+            panel_points[graph_data[0]-1] = ((((graph_data[0]-1) * 37), 130-point))
+        else:
+            panel_points[graph_data[0]-1] = ((((graph_data[0]-1) * 37), 130))
+
+    panel_points.append((0,130))
+    hum_points.append((0,130))
+    temp_points.append((0,130))
+
+    pygame.gfxdraw.filled_polygon(surface_temp, temp_points, constants.white)
+    pygame.gfxdraw.filled_polygon(surface_hum, hum_points, constants.white)
+    pygame.gfxdraw.filled_polygon(surface_sun, panel_points, constants.white)
+
+    #add surfaces to main surface and return
+    surface_main.blit(surface_temp, [53,45])
+    surface_main.blit(surface_hum, [53,210])
+    surface_main.blit(surface_sun, [53,375])
+    return surface_main
+
