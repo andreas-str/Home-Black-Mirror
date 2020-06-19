@@ -128,10 +128,10 @@ def update_display(mode):
     else:
         # normal transition, change modes
         if (GB.ir_timer >= 1 and GB.ir_timer < 5):
-            GB.mode += 1
+            mode += 1
             GB.update_graph = False
-            if GB.mode > 3:
-                GB.mode = 0
+            if mode > 3:
+                mode = 0
         elif GB.ir_timer >= 5 and GB.ir_timer < 10:
             stop_display_loop(False)
         elif GB.ir_timer >= 10 and GB.ir_timer < 20:
@@ -302,7 +302,6 @@ def update_weather():
 def update_notifications():
     GB.surface_notifications.fill(constants.black)
     GB.main_font_tiny.render_to(GB.surface_notifications, (0, 150), "This is a notification area", constants.white) 
-
 
 def debug_info():
 
