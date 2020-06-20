@@ -440,9 +440,9 @@ def draw_graph(type):
         pygame.draw.lines(surface_temp, constants.gray3, False, [(i*37,0), (i*37,128)], 1)
         pygame.draw.lines(surface_hum, constants.gray3, False, [(i*37,0), (i*37,128)], 1)
         pygame.draw.lines(surface_sun, constants.gray3, False, [(i*37,0), (i*37,128)], 1)
-    pygame.draw.lines(surface_temp, constants.gray3, False, [(0,64), (850,64)], 1)
-    pygame.draw.lines(surface_hum, constants.gray3, False, [(0,64), (850,64)], 1)
-    pygame.draw.lines(surface_sun, constants.gray3, False, [(0,64), (850,64)], 1)
+    pygame.draw.lines(surface_temp, constants.gray4, False, [(0,64), (850,64)], 2)
+    pygame.draw.lines(surface_hum, constants.gray4, False, [(0,64), (850,64)], 2)
+    pygame.draw.lines(surface_sun, constants.gray4, False, [(0,64), (850,64)], 2)
     #draw texts
     GB.main_font_small.render_to(surface_temp, (265, 15), "Temperature", constants.gray4)
     GB.main_font_small.render_to(surface_hum, (305, 15), "Humidity", constants.gray4)
