@@ -2,3 +2,5 @@
 main/__pycache__/
 
 main/.vscode/
+
+main/main_data.db
