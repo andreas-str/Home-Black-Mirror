@@ -360,10 +360,13 @@ def draw_graph(type):
     pygame.draw.lines(surface_temp, constants.white, False, [(0,0), (0,128), (850,128)], 2)
     pygame.draw.lines(surface_hum, constants.white, False, [(0,0), (0,128), (850,128)], 2)
     pygame.draw.lines(surface_sun, constants.white, False, [(0,0), (0,128), (850,128)], 2)
+    #show current time
+    time_now, pm_am_now = get_time()
+    GB.main_font_small.render_to(surface_main, (775, 5), time_now, constants.gray1)
 
     if type == 1:
         data = sq_database.get_data_today()
-        GB.main_font_small.render_to(surface_main, (380, 0), "Today", constants.white)
+        GB.main_font_small.render_to(surface_main, (380, 5), "Today", constants.white)
     elif type == 2:
         data = sq_database.get_data_yesterday()
         GB.main_font_small.render_to(surface_main, (340, 5), "Yesterday", constants.white)
@@ -393,10 +396,13 @@ def draw_graph(type):
 
     #draw min max
     GB.main_font_tiny.render_to(surface_main, (15, 45), str(min_max_temp[1]), constants.white)
+    GB.main_font_tiny.render_to(surface_main, (15, 100), str(min_max_temp[1]-min_max_temp[0]), constants.white)
     GB.main_font_tiny.render_to(surface_main, (15, 155), str(min_max_temp[0]), constants.white)
     GB.main_font_tiny.render_to(surface_main, (15, 210), str(min_max_hum[1]), constants.white)
+    GB.main_font_tiny.render_to(surface_main, (15, 265), str(min_max_hum[1]-min_max_hum[0]), constants.white)
     GB.main_font_tiny.render_to(surface_main, (15, 320), str(min_max_hum[0]), constants.white)
     GB.main_font_tiny.render_to(surface_main, (0, 375), str(min_max_panel[1]), constants.white)
+    GB.main_font_tiny.render_to(surface_main, (0, 430), str(min_max_panel[1]-min_max_panel[0]), constants.white)
     GB.main_font_tiny.render_to(surface_main, (0, 485), str(min_max_panel[0]), constants.white)
 
     for i in range(0,7):
@@ -429,6 +435,14 @@ def draw_graph(type):
     pygame.gfxdraw.filled_polygon(surface_hum, hum_points, constants.white)
     pygame.gfxdraw.filled_polygon(surface_sun, panel_points, constants.white)
 
+    #draw lines
+    for i in range(24):
+        pygame.draw.lines(surface_temp, constants.gray3, False, [(i*37,0), (i*37,128)], 1)
+        pygame.draw.lines(surface_hum, constants.gray3, False, [(i*37,0), (i*37,128)], 1)
+        pygame.draw.lines(surface_sun, constants.gray3, False, [(i*37,0), (i*37,128)], 1)
+    pygame.draw.lines(surface_temp, constants.gray3, False, [(0,64), (850,64)], 1)
+    pygame.draw.lines(surface_hum, constants.gray3, False, [(0,64), (850,64)], 1)
+    pygame.draw.lines(surface_sun, constants.gray3, False, [(0,64), (850,64)], 1)
     #draw texts
     GB.main_font_small.render_to(surface_temp, (265, 15), "Temperature", constants.gray4)
     GB.main_font_small.render_to(surface_hum, (305, 15), "Humidity", constants.gray4)
