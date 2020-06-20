@@ -283,9 +283,11 @@ def update_weather():
         if GB.is_day_time == 0 or GB.is_day_time == -1:
             GB.surface_weather.blit(GB.moon_icon, (290,25))
         else:
-
-            #GB.surface_weather.blit(GB.sun_icon, (290,25))
-            GB.surface_weather.blit(GB.cloud_icon, (290,25))
+            #if sunny, display sun, duh
+            if int(Data[2]) > 450:
+                GB.surface_weather.blit(GB.sun_icon, (290,25))
+            else:
+                GB.surface_weather.blit(GB.cloud_icon, (290,25))
 
         if external.Ext_ctrl.new_rx_data == False:
             GB.last_weather_update += 1
