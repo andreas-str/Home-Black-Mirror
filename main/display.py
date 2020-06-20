@@ -396,13 +396,13 @@ def draw_graph(type):
 
     #draw min max
     GB.main_font_tiny.render_to(surface_main, (15, 45), str(min_max_temp[1]), constants.white)
-    GB.main_font_tiny.render_to(surface_main, (15, 100), str(int((min_max_temp[1]-min_max_temp[0])/2)), constants.white)
+    GB.main_font_tiny.render_to(surface_main, (15, 100), str(int((min_max_temp[1]-min_max_temp[0])/(2+min_max_temp[0]))), constants.white)
     GB.main_font_tiny.render_to(surface_main, (15, 155), str(min_max_temp[0]), constants.white)
     GB.main_font_tiny.render_to(surface_main, (15, 210), str(min_max_hum[1]), constants.white)
-    GB.main_font_tiny.render_to(surface_main, (15, 265), str(int((min_max_hum[1]-min_max_hum[0])/2)), constants.white)
+    GB.main_font_tiny.render_to(surface_main, (15, 265), str(int((min_max_hum[1]-min_max_hum[0])/(2+min_max_hum[0]))), constants.white)
     GB.main_font_tiny.render_to(surface_main, (15, 320), str(min_max_hum[0]), constants.white)
     GB.main_font_tiny.render_to(surface_main, (0, 375), str(min_max_panel[1]), constants.white)
-    GB.main_font_tiny.render_to(surface_main, (0, 430), str(int((min_max_panel[1]-min_max_panel[0])/2)), constants.white)
+    GB.main_font_tiny.render_to(surface_main, (0, 430), str(int((min_max_panel[1]-min_max_panel[0])/(2+min_max_panel[0]))), constants.white)
     GB.main_font_tiny.render_to(surface_main, (0, 485), str(min_max_panel[0]), constants.white)
 
     for i in range(0,7):
