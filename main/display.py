@@ -1,4 +1,5 @@
 import external
+import services
 import constants
 import time
 import datetime
@@ -28,17 +29,21 @@ class GB():
     update_control = True
     intentional_shutdown = False
     init_control = True
+    clearn_notif_check = False
     is_day_time = 0
     tick_timer = 0
     ir_timer = 0
     last_weather_update = 0
     mode = 0
     update_graph = False
+    total_notifications = 0
+    found_notifications = []
     pygame.freetype.init()
     main_font = pygame.freetype.Font(fonts_path + "/AurulentSansMono_Regular.ttf", 150)
     main_font_medium = pygame.freetype.Font(fonts_path + "/Code_New_Roman.ttf", 70)
     main_font_small = pygame.freetype.Font(fonts_path + "/F25_Bank_Printer.ttf", 40)
     main_font_tiny = pygame.freetype.Font(fonts_path + "/Code_New_Roman.ttf", 30)
+    main_font_notification = pygame.freetype.Font(fonts_path + "/Code_New_Roman.ttf", 24)
     temp_icon = pygame.image.load(icons_path+ "/temp_icon.png")
     hum_icon = pygame.image.load(icons_path+ "/hum_icon.png")
     sun_icon = pygame.image.load(icons_path+ "/sun.png")
@@ -77,7 +82,7 @@ def main_display_loop():
                 elif event.unicode == 'm':
                     GB.mode += 1
                     GB.update_graph = False
-                    if GB.mode > 3:
+                    if GB.mode > 5:
                         GB.mode = 0
                 elif event.unicode == 'f':
                     if GB.screen.get_flags() & pygame.FULLSCREEN:
@@ -105,6 +110,7 @@ def update_display(mode):
         create_surfaces()
         update_day_curve()
         update_weather()
+        GB.total_notifications, GB.found_notifications = services.get_notifications()
         update_notifications()
         GB.init_control = False
 
@@ -112,6 +118,7 @@ def update_display(mode):
     if GB.tick_timer > 60:
         update_day_curve()
         update_weather()
+        GB.total_notifications, GB.found_notifications = services.get_notifications()
         GB.tick_timer = 0
         #after midnight, move todays data to yesterdays data on the database
         if(datetime.datetime.now().time().hour == 0 and datetime.datetime.now().time().minute <= 1):
@@ -130,10 +137,12 @@ def update_display(mode):
         if (GB.ir_timer >= 1 and GB.ir_timer < 5):
             GB.mode += 1
             GB.update_graph = False
-            if GB.mode > 3:
+            if GB.mode > 5:
                 GB.mode = 0
+        #actions
         elif GB.ir_timer >= 5 and GB.ir_timer < 10:
             stop_display_loop(False)
+        #exit app+shutdown
         elif GB.ir_timer >= 10 and GB.ir_timer < 20:
             stop_display_loop(True)
 
@@ -150,17 +159,23 @@ def update_display(mode):
         GB.screen.blit(GB.surface_day_main, [475,10])
         GB.screen.blit(GB.surface_weather, [475,270])
         GB.screen.blit(GB.surface_notifications, [20,270])
-    elif GB.mode == 1: #today graph
+    elif GB.mode == 1: #notifications
+        notification_surface = show_notifications()
+        GB.screen.blit(notification_surface, [0,0])
+    elif GB.mode == 2: #devices
+        devices_surface = show_devices()
+        GB.screen.blit(devices_surface, [0,0])
+    elif GB.mode == 3: #today graph
         if GB.update_graph == False:
             GB.surface_graph = draw_graph(1)
             GB.update_graph = True
         GB.screen.blit(GB.surface_graph, [0,0])
-    elif GB.mode == 2: #yesterday graph
+    elif GB.mode == 4: #yesterday graph
         if GB.update_graph == False:
             GB.surface_graph = draw_graph(2)
             GB.update_graph = True
         GB.screen.blit(GB.surface_graph, [0,0])
-    elif GB.mode == 3:  #debug mode
+    elif GB.mode == 5:  #debug mode
         debug_info()
         draw_graph(0)
         GB.screen.blit(GB.surface_debug, [80,110])
@@ -303,7 +318,24 @@ def update_weather():
 
 def update_notifications():
     GB.surface_notifications.fill(constants.black)
-    GB.main_font_tiny.render_to(GB.surface_notifications, (0, 150), "This is a notification area", constants.white) 
+
+    if GB.total_notifications == 1:
+        pygame.draw.lines(GB.surface_notifications, constants.white, True, [(0,0), (0,110), (440,110), (440,0)], 2)
+        GB.main_font_tiny.render_to(GB.surface_notifications, (5, 10), GB.found_notifications[0][0], constants.white) 
+        GB.main_font_notification.render_to(GB.surface_notifications, (8, 55), GB.found_notifications[0][1], constants.white) 
+        GB.main_font_notification.render_to(GB.surface_notifications, (8, 85), GB.found_notifications[0][2], constants.white) 
+        GB.main_font_notification.render_to(GB.surface_notifications, (370, 10), GB.found_notifications[0][3], constants.white) 
+    elif GB.total_notifications >= 2:
+        pygame.draw.lines(GB.surface_notifications, constants.white, True, [(0,0), (0,110), (440,110), (440,0)], 2)
+        GB.main_font_tiny.render_to(GB.surface_notifications, (5, 10), GB.found_notifications[0][0], constants.white) 
+        GB.main_font_notification.render_to(GB.surface_notifications, (8, 55), GB.found_notifications[0][1], constants.white) 
+        GB.main_font_notification.render_to(GB.surface_notifications, (8, 85), GB.found_notifications[0][2], constants.white) 
+        GB.main_font_notification.render_to(GB.surface_notifications, (370, 10), GB.found_notifications[0][3], constants.white) 
+        pygame.draw.lines(GB.surface_notifications, constants.white, True, [(0,130), (0,240), (440,240), (440,130)], 2)
+        GB.main_font_tiny.render_to(GB.surface_notifications, (5, 140), GB.found_notifications[1][0], constants.white) 
+        GB.main_font_notification.render_to(GB.surface_notifications, (8, 175), GB.found_notifications[1][1], constants.white) 
+        GB.main_font_notification.render_to(GB.surface_notifications, (8, 205), GB.found_notifications[1][2], constants.white) 
+        GB.main_font_notification.render_to(GB.surface_notifications, (370, 140), GB.found_notifications[1][3], constants.white) 
 
 def debug_info():
 
@@ -454,3 +486,26 @@ def draw_graph(type):
     surface_main.blit(surface_sun, [53,375])
     return surface_main
 
+def show_notifications():
+    surface_main = pygame.Surface((915,531))
+    surface_main.fill(constants.black) 
+
+    GB.main_font_small.render_to(surface_main, (280, 5), "Notifications", constants.white) 
+    time_now, pm_am_now = get_time()
+    GB.main_font_small.render_to(surface_main, (775, 5), time_now, constants.gray1)
+
+    for i in range(GB.total_notifications):
+        pygame.draw.lines(surface_main, constants.white, True, [(50,50+(120*i)), (50,150+(120*i)), (900,150+(120*i)), (900,50+(120*i))], 2)
+        GB.main_font_tiny.render_to(surface_main, (60, 60+(120*i)), GB.found_notifications[i][0], constants.white) 
+        GB.main_font_notification.render_to(surface_main, (60, 95+(120*i)), GB.found_notifications[i][1], constants.white)
+        GB.main_font_notification.render_to(surface_main, (60, 120+(120*i)), GB.found_notifications[i][2], constants.white)
+        GB.main_font_notification.render_to(surface_main, (830, 60+(120*i)), GB.found_notifications[i][3], constants.white)  
+
+    return surface_main
+
+def show_devices():
+    surface_main = pygame.Surface((915,531))
+    surface_main.fill(constants.black) 
+    GB.main_font_small.render_to(surface_main, (280, 5), "Live Devices", constants.white) 
+
+    return surface_main
