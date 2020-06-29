@@ -3,11 +3,13 @@ import email
 import time
 import datetime
 
-def get_notifications():
+def get_notifications(conf_data):
     tfhour = time.strptime(str(datetime.datetime.now().time().hour) + ":" + str(datetime.datetime.now().time().minute), "%H:%M")
     twhour_now = time.strftime( "%I:%M", tfhour)
-    raw_data = notification_scraper()
+    raw_data = notification_scraper(conf_data)
     final_data = []
+    if raw_data == 0:
+        return 0, final_data
     for i in range (3):
         split_data = []
         split_data = raw_data[i].split("////")
@@ -18,9 +20,14 @@ def get_notifications():
     total_notifications = len(final_data)
     return total_notifications, final_data
 
-def notification_scraper():
+def notification_scraper(conf_data):
+    try:
+        text, email_acc, psswd = conf_data.split('\n')
+    except:
+        print("Can't read config file, make sure you followed the instructions")
+        return 0
     mail = imaplib.IMAP4_SSL('imap.gmail.com')
-    mail.login('ifttt.notification.handler@gmail.com','nRBsw2AdYo20n4ASeekMAI')
+    mail.login(email_acc,psswd)
     mail.select('inbox')
 
     result, data = mail.search(None, 'ALL')

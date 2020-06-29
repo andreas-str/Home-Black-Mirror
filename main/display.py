@@ -14,6 +14,11 @@ import sq_database
 main_path = pathlib.Path(__file__).parent.as_posix()
 fonts_path = str(main_path) + "/fonts"
 icons_path = str(main_path) + "/icons"
+config_path = 'config.ini'
+conf_data = None
+
+with open(config_path, 'r') as conf_file:
+    conf_data=conf_file.read()
 
 
 # Globals pls dont kill me I know ok
@@ -110,7 +115,7 @@ def update_display(mode):
         create_surfaces()
         update_day_curve()
         update_weather()
-        GB.total_notifications, GB.found_notifications = services.get_notifications()
+        GB.total_notifications, GB.found_notifications = services.get_notifications(conf_data)
         update_notifications()
         GB.init_control = False
 
@@ -118,7 +123,7 @@ def update_display(mode):
     if GB.tick_timer > 60:
         update_day_curve()
         update_weather()
-        GB.total_notifications, GB.found_notifications = services.get_notifications()
+        GB.total_notifications, GB.found_notifications = services.get_notifications(conf_data)
         GB.tick_timer = 0
         #after midnight, move todays data to yesterdays data on the database
         if(datetime.datetime.now().time().hour == 0 and datetime.datetime.now().time().minute <= 1):
