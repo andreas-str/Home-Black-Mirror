@@ -4,6 +4,7 @@ import constants
 import time
 import datetime
 import pathlib
+from pathlib import Path
 import pygame
 import pygame.freetype
 import pygame.gfxdraw
@@ -15,11 +16,22 @@ main_path = pathlib.Path(__file__).parent.as_posix()
 fonts_path = str(main_path) + "/fonts"
 icons_path = str(main_path) + "/icons"
 config_path = 'config.ini'
+config_path_checker = Path(config_path)
 conf_data = None
 
-with open(config_path, 'r') as conf_file:
-    conf_data=conf_file.read()
+try:
+    if config_path_checker.is_file():
+        print("config found!")
+    else:
+        print("config not found, making empty file!")
+        file = open(config_path, 'w+')
+        file.write('Enter email and password, seperated by newline, no spaces\n')
+        file.close()
+except IOError:
+    print("Something is wrong with reading config file")
 
+with open(config_path, 'r') as conf_file:
+            conf_data=conf_file.read()
 
 # Globals pls dont kill me I know ok
 class GB():

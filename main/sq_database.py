@@ -1,8 +1,19 @@
 import sqlite3
 import pathlib
+from pathlib import Path
 
 main_path = pathlib.Path(__file__).parent.as_posix()
 db_path = str(main_path) + "/main_data.db"
+bd_path_checker = Path(db_path)
+
+try:
+    if bd_path_checker.is_file():
+        print("db file found!")
+    else:
+        print("db file not found, making empty db!")
+        open(db_path, 'a').close()
+except IOError:
+    print("Something is wrong with reading the database")
 
 db_connection = sqlite3.connect(db_path)
 db_cursor = db_connection.cursor()
