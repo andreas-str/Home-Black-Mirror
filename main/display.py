@@ -322,19 +322,25 @@ def update_notifications():
     if GB.total_notifications == 1:
         pygame.draw.lines(GB.surface_notifications, constants.white, True, [(0,0), (0,110), (440,110), (440,0)], 2)
         GB.main_font_tiny.render_to(GB.surface_notifications, (5, 10), GB.found_notifications[0][0], constants.white) 
-        GB.main_font_notification.render_to(GB.surface_notifications, (8, 55), GB.found_notifications[0][1], constants.white) 
-        GB.main_font_notification.render_to(GB.surface_notifications, (8, 85), GB.found_notifications[0][2], constants.white) 
+        line = GB.found_notifications[0][1]
+        notification_text = [line[i:i+33] for i in range(0, len(line), 33)]
+        GB.main_font_notification.render_to(GB.surface_notifications, (8, 55), notification_text[0], constants.white) 
+        GB.main_font_notification.render_to(GB.surface_notifications, (8, 85), notification_text[1], constants.white) 
         GB.main_font_notification.render_to(GB.surface_notifications, (370, 10), GB.found_notifications[0][3], constants.white) 
     elif GB.total_notifications >= 2:
         pygame.draw.lines(GB.surface_notifications, constants.white, True, [(0,0), (0,110), (440,110), (440,0)], 2)
         GB.main_font_tiny.render_to(GB.surface_notifications, (5, 10), GB.found_notifications[0][0], constants.white) 
-        GB.main_font_notification.render_to(GB.surface_notifications, (8, 55), GB.found_notifications[0][1], constants.white) 
-        GB.main_font_notification.render_to(GB.surface_notifications, (8, 85), GB.found_notifications[0][2], constants.white) 
+        line = GB.found_notifications[0][1]
+        notification_text = [line[i:i+33] for i in range(0, len(line), 33)]
+        GB.main_font_notification.render_to(GB.surface_notifications, (8, 55), notification_text[0], constants.white) 
+        GB.main_font_notification.render_to(GB.surface_notifications, (8, 85), notification_text[1], constants.white) 
         GB.main_font_notification.render_to(GB.surface_notifications, (370, 10), GB.found_notifications[0][3], constants.white) 
         pygame.draw.lines(GB.surface_notifications, constants.white, True, [(0,130), (0,240), (440,240), (440,130)], 2)
         GB.main_font_tiny.render_to(GB.surface_notifications, (5, 140), GB.found_notifications[1][0], constants.white) 
-        GB.main_font_notification.render_to(GB.surface_notifications, (8, 175), GB.found_notifications[1][1], constants.white) 
-        GB.main_font_notification.render_to(GB.surface_notifications, (8, 205), GB.found_notifications[1][2], constants.white) 
+        line2 = GB.found_notifications[1][1]
+        notification_text2 = [line2[i:i+33] for i in range(0, len(line2), 33)]
+        GB.main_font_notification.render_to(GB.surface_notifications, (8, 175), notification_text2[0], constants.white) 
+        GB.main_font_notification.render_to(GB.surface_notifications, (8, 205), notification_text2[1], constants.white) 
         GB.main_font_notification.render_to(GB.surface_notifications, (370, 140), GB.found_notifications[1][3], constants.white) 
 
 def debug_info():
