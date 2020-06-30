@@ -14,7 +14,12 @@ User input is done using an ir range sensor
 
 The resolution set is custom to fit on a composite 4.3" lcd. The main surfaces can be rearanged to fit a bigger screen if needed.
 
+To run, execute the main with "python3 main.py" Pressing Q will quit the program. M will switch through the different modes
+
 This program will run on a device other than a Raspberry pi for testing purposes 
+
+Dependances: (can be instelled using PIP)
+pathlib, pygame, astral, sqlite3, pigpio, gpiozero, imaplib
 
 # Arduino
 
