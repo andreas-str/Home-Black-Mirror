@@ -7,7 +7,7 @@ Small project using a small screen and a Raspberry Pi to display some constant i
 
 This project was made to run on the original Raspberry Pi Model B, so because of the limited cpu power, a few compremises had to be made
 
-To run, you need Python 3, and for dependancies you need astral, pygame, gpiozero, piVirtualWire and lastly pigpio. pigpio needs to be started prior to starting the the program. 
+To run, you need Python 3, and for dependancies you need astral, pygame, sqlite3, gpiozero, piVirtualWire and lastly pigpio. pigpio needs to be started prior to starting the the program. 
 
 The system uses a 433Mhz receiver to get weather information from the weather station
 User input is done using an ir range sensor
@@ -18,8 +18,6 @@ To run, execute the main with "python3 main.py" Pressing Q will quit the program
 
 This program will run on a device other than a Raspberry pi for testing purposes 
 
-Dependances: (can be instelled using PIP)
-pathlib, pygame, astral, sqlite3, pigpio, gpiozero, imaplib
 
 # Arduino
 
