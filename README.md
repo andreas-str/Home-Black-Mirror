@@ -2,6 +2,8 @@
 
 Small project using a small screen and a Raspberry Pi to display some constant information related to time, weather and notifications
 
+This was done for fun during the COVID-19 lockdown because I had nothing else to do
+
 
 # Raspberry Pi
 
